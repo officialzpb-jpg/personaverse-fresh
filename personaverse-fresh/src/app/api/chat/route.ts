@@ -1,4 +1,4 @@
-// app/api/chat/route.ts - Simplified version
+// app/api/chat/route.ts - Vertex AI Integration
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -13,14 +13,56 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Simple response for now (AI integration to be added)
+    // Call Google Vertex AI (Gemini)
+    const apiKey = process.env.GOOGLE_AI_API_KEY;
+    
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'AI service not configured' },
+        { status: 503 }
+      );
+    }
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `You are a helpful assistant for PersonaVerse, an AI personality platform. Answer this question: ${prompt}`,
+                },
+              ],
+            },
+          ],
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('Vertex AI Error:', error);
+      return NextResponse.json(
+        { error: 'AI service temporarily unavailable' },
+        { status: 503 }
+      );
+    }
+
+    const data = await response.json();
+    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI';
+
     return NextResponse.json({
-      content: `You asked: "${prompt}"\n\nAI integration coming soon! This is a placeholder response.`,
-      model: 'placeholder',
+      content: aiResponse,
+      model: 'gemini-pro',
       tokens: {
         prompt: prompt.length / 4,
-        completion: 50,
-        total: prompt.length / 4 + 50,
+        completion: aiResponse.length / 4,
+        total: (prompt.length + aiResponse.length) / 4,
       },
     });
 
