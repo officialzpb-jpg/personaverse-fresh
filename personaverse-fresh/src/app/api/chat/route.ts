@@ -1,24 +1,28 @@
-// app/api/chat/route.ts - Ultra simple version
+// app/api/chat/route.ts - Debug version
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const { prompt } = body;
 
-  console.log('1. Starting API call');
-  console.log('2. Prompt:', prompt);
-  console.log('3. API Key set:', process.env.GOOGLE_AI_API_KEY ? 'YES' : 'NO');
-
-  const apiKey = process.env.GOOGLE_AI_API_KEY;
+  console.log('START');
+  console.log('Prompt:', prompt);
   
-  if (!apiKey) {
-    console.log('4. ERROR: No API key');
-    return NextResponse.json({ content: 'Error: No API key', model: 'error' });
+  const apiKey = process.env.GOOGLE_AI_API_KEY;
+  console.log('API Key length:', apiKey?.length || 0);
+  console.log('API Key exists:', !!apiKey);
+  
+  if (!apiKey || apiKey.length < 10) {
+    console.log('ERROR: API key missing or too short');
+    return NextResponse.json({ 
+      content: `Debug: API key issue. Length: ${apiKey?.length || 0}`, 
+      model: 'debug' 
+    });
   }
 
+  console.log('Making API call with key starting with:', apiKey.substring(0, 10));
+
   try {
-    console.log('5. Making fetch call...');
-    
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
       {
@@ -30,28 +34,26 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log('6. Response status:', response.status);
+    console.log('Response status:', response.status);
 
     if (!response.ok) {
       const error = await response.text();
-      console.log('7. ERROR response:', error);
+      console.log('API Error:', error);
       return NextResponse.json({ 
-        content: `API Error ${response.status}: ${error.substring(0, 100)}`, 
+        content: `API Error: ${response.status}`, 
         model: 'error' 
       });
     }
 
     const data = await response.json();
-    console.log('8. Success! Data received');
-    
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No text';
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response';
     
     return NextResponse.json({ content: text, model: 'gemini' });
 
   } catch (err) {
-    console.log('9. CATCH ERROR:', err);
+    console.log('Exception:', err);
     return NextResponse.json({ 
-      content: `Exception: ${err instanceof Error ? err.message : 'Unknown'}`, 
+      content: `Error: ${err instanceof Error ? err.message : 'Unknown'}`, 
       model: 'error' 
     });
   }
