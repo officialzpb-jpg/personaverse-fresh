@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Chat API Error:', error);
     return NextResponse.json({
-      content: getFallbackResponse(prompt),
+      content: "I can help you navigate PersonaVerse! Ask about creating personas, pricing, or features.",
       model: 'fallback',
       note: 'Using fallback responses'
     });
