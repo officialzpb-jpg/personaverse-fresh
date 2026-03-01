@@ -5,6 +5,7 @@ import { Features } from "@/components/effects/Features";
 import { PersonaShowcase } from "@/components/personas/PersonaShowcase";
 import { Pricing } from "@/components/effects/Pricing";
 import { Testimonials } from "@/components/effects/Testimonials";
+import { ChatWidget } from "@/components/chat/ChatInterface";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <Pricing />
       <Testimonials />
       <Footer />
+      <ChatWidget />
     </main>
   );
 }

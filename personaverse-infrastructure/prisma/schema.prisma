@@ -1,0 +1,139 @@
+// lib/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  tier          Tier      @default(free)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  subscription  Subscription?
+  usage         UserUsage?
+  requests      AIRequest[]
+  sessions      ChatSession[]
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  tier      Tier
+  status    SubscriptionStatus @default(active)
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  price     Decimal  @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserUsage {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  
+  // Daily tracking
+  dailyMessagesUsed   Int      @default(0)
+  dailyResetAt        DateTime @default(now())
+  
+  // Monthly tracking
+  monthlyTokensUsed   Int      @default(0)
+  monthlyResetAt      DateTime @default(now())
+  
+  // Cost tracking
+  totalCost           Decimal  @default(0) @db.Decimal(10, 4)
+  totalRevenue        Decimal  @default(0) @db.Decimal(10, 2)
+  
+  // Limits
+  dailyMessageLimit   Int      @default(20)
+  monthlyTokenLimit   Int      @default(10000)
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model AIRequest {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  
+  // Request details
+  model             String
+  personaId         String?
+  prompt            String   @db.Text
+  response          String   @db.Text
+  
+  // Token tracking
+  promptTokens      Int
+  completionTokens  Int
+  totalTokens       Int
+  
+  // Cost tracking
+  inputCost         Decimal  @db.Decimal(10, 6)
+  outputCost        Decimal  @db.Decimal(10, 6)
+  totalCost         Decimal  @db.Decimal(10, 6)
+  
+  // Metadata
+  cached            Boolean  @default(false)
+  processingTime    Int      // milliseconds
+  ipAddress         String?
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([model, createdAt])
+  @@index([createdAt])
+}
+
+model ChatSession {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  personaId   String?
+  title       String?
+  
+  messages    Json      // Array of {role, content, timestamp}
+  
+  totalTokens Int       @default(0)
+  totalCost   Decimal   @default(0) @db.Decimal(10, 6)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([userId, updatedAt])
+}
+
+model RateLimit {
+  id            String    @id @default(cuid())
+  ipAddress     String    @unique
+  requestCount  Int       @default(0)
+  windowStart   DateTime  @default(now())
+  blockedUntil  DateTime?
+  
+  @@index([ipAddress])
+  @@index([windowStart])
+}
+
+enum Tier {
+  free
+  pro
+  creator
+  enterprise
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  past_due
+  unpaid
+}
