@@ -13,7 +13,8 @@ import {
   RotateCcw,
   ThumbsUp,
   ThumbsDown,
-  Zap
+  Zap,
+  AlertCircle
 } from "lucide-react";
 
 interface Message {
@@ -34,10 +35,9 @@ interface Persona {
 }
 
 const AI_MODELS = [
-  { id: "gpt-4", name: "GPT-4", icon: "🧠", description: "Most capable" },
-  { id: "claude-3", name: "Claude 3", icon: "🎯", description: "Thoughtful" },
-  { id: "gemini", name: "Gemini", icon: "✨", description: "Multimodal" },
-  { id: "fusion", name: "Fusion Mode", icon: "🔥", description: "Ensemble" },
+  { id: "gpt-4", name: "GPT-4", provider: "openai", icon: "🧠", description: "Most capable" },
+  { id: "claude-3-sonnet", name: "Claude 3", provider: "anthropic", icon: "🎯", description: "Thoughtful" },
+  { id: "gemini-pro", name: "Gemini", provider: "google", icon: "✨", description: "Multimodal" },
 ];
 
 const DEFAULT_PERSONA: Persona = {
@@ -46,52 +46,6 @@ const DEFAULT_PERSONA: Persona = {
   avatar: "🤖",
   color: "from-purple-500 to-blue-500",
   description: "Your helpful AI companion",
-};
-
-// Simulated AI responses based on persona
-const getSimulatedResponse = (persona: Persona, userMessage: string): string => {
-  const responses: Record<string, string[]> = {
-    "viral-vince": [
-      "That content idea has potential, but here's how to make it EXPLODE: hook them in the first 3 seconds with a pattern interrupt. People scroll fast — you need to stop the thumb!",
-      "Algorithm tip: post when your audience is commuting or on lunch breaks. 7-9 AM and 12-2 PM are gold mines for engagement.",
-      "Your thumbnail game needs work. Bright colors, high contrast, and a face showing emotion. Shock, curiosity, or controversy — pick one.",
-    ],
-    "tech-titan": [
-      "From a startup perspective, you're thinking too small. What's the 10x improvement? If it's not 10x better, incumbents will crush you.",
-      "Fundraising is a means to an end, not the goal. Focus on traction first. Revenue talks, projections walk.",
-      "Hire for slope, not y-intercept. You want people who learn fast, not just people who know a lot.",
-    ],
-    "mindful-maya": [
-      "Take a deep breath with me. In for 4 counts, hold for 4, out for 4. Your nervous system needs this reset.",
-      "Productivity isn't about doing more — it's about doing what matters. What's the ONE thing that would make today a win?",
-      "That inner critic? Thank it for trying to protect you, then gently set it aside. You are enough, exactly as you are.",
-    ],
-    "game-guru": [
-      "Your aim mechanics need work. Lower your sensitivity, focus on crosshair placement at head level. Pre-aim angles before peeking.",
-      "Streaming is 20% gameplay, 80% entertainment. Talk constantly, even if nobody's watching. The VODs matter too.",
-      "Community first, content second. Reply to every comment when you're small. Those early fans become your army.",
-    ],
-    "dating-doctor": [
-      "Your text game is too eager. Match their energy level. If they reply in 2 hours, you reply in 2 hours. Scarcity creates value.",
-      "First date location matters. Coffee or drinks — low investment, easy exit. Save dinner for date 3+ when you know there's chemistry.",
-      "Confidence isn't about being perfect, it's about being comfortable with imperfection. Own your quirks.",
-    ],
-    "code-wizard": [
-      "That architecture will bite you at scale. Consider event-driven instead of synchronous. Queue the heavy work.",
-      " premature optimization is the root of all evil, BUT... database queries in loops? That's just negligence.",
-      "Type safety isn't optional for production code. The time you 'save' skipping it, you'll spend debugging at 2 AM.",
-    ],
-    default: [
-      "That's an interesting question! Let me think through this carefully...",
-      "I appreciate you sharing that. Here's my perspective on the matter...",
-      "Great point! I'd add that there are multiple angles to consider here...",
-      "From what I understand, you're asking about something quite nuanced...",
-      "I can definitely help with that. Let me break it down step by step...",
-    ],
-  };
-
-  const personaResponses = responses[persona.id] || responses.default;
-  return personaResponses[Math.floor(Math.random() * personaResponses.length)];
 };
 
 interface ChatInterfaceProps {
@@ -114,6 +68,7 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
   const [isTyping, setIsTyping] = useState(false);
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0]);
   const [showModelSelector, setShowModelSelector] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -125,13 +80,43 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
     scrollToBottom();
   }, [messages]);
 
+  const callAIAPI = async (userMessage: string): Promise<{ response: string; model: string }> => {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [
+          ...messages
+            .filter((m) => m.id !== "welcome")
+            .map((m) => ({ role: m.role, content: m.content })),
+          { role: "user" as const, content: userMessage },
+        ],
+        persona: persona.id,
+        model: selectedModel.id,
+        provider: selectedModel.provider,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Failed to get AI response");
+    }
+
+    return response.json();
+  };
+
   const handleSend = async () => {
     if (!input.trim() || isTyping) return;
+
+    setError(null);
+    const userMessageContent = input.trim();
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: input.trim(),
+      content: userMessageContent,
       timestamp: new Date(),
     };
 
@@ -139,29 +124,28 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const responseContent = getSimulatedResponse(persona, userMessage.content);
-      
-      // Simulate typing effect
+    try {
+      const { response, model } = await callAIAPI(userMessageContent);
+
+      // Simulate typing effect with real response
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: "",
         timestamp: new Date(),
-        model: selectedModel.id,
+        model: model || selectedModel.id,
       };
-      
+
       setMessages((prev) => [...prev, aiMessage]);
-      
+
       let charIndex = 0;
       const typeInterval = setInterval(() => {
-        if (charIndex < responseContent.length) {
+        if (charIndex < response.length) {
           setMessages((prev) => {
             const newMessages = [...prev];
             const lastMessage = newMessages[newMessages.length - 1];
             if (lastMessage.role === "assistant") {
-              lastMessage.content = responseContent.slice(0, charIndex + 1);
+              lastMessage.content = response.slice(0, charIndex + 1);
             }
             return newMessages;
           });
@@ -170,8 +154,21 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
           clearInterval(typeInterval);
           setIsTyping(false);
         }
-      }, 20);
-    }, 800 + Math.random() * 1000);
+      }, 15);
+    } catch (err) {
+      setIsTyping(false);
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      
+      // Add error message to chat
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I'm having trouble connecting right now. Please try again in a moment.",
+        timestamp: new Date(),
+        model: selectedModel.id,
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -185,26 +182,49 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
     navigator.clipboard.writeText(content);
   };
 
-  const regenerateResponse = () => {
-    // Remove last assistant message and trigger new response
+  const regenerateResponse = async () => {
+    setError(null);
+    const lastUserMessage = messages[messages.length - 2];
+    if (!lastUserMessage || lastUserMessage.role !== "user") return;
+
+    // Remove last assistant message
     setMessages((prev) => prev.slice(0, -1));
     setIsTyping(true);
-    
-    setTimeout(() => {
-      const lastUserMessage = messages[messages.length - 2]?.content || "";
-      const responseContent = getSimulatedResponse(persona, lastUserMessage);
-      
+
+    try {
+      const { response, model } = await callAIAPI(lastUserMessage.content);
+
       const aiMessage: Message = {
         id: Date.now().toString(),
         role: "assistant",
-        content: responseContent,
+        content: "",
         timestamp: new Date(),
-        model: selectedModel.id,
+        model: model || selectedModel.id,
       };
-      
+
       setMessages((prev) => [...prev, aiMessage]);
+
+      let charIndex = 0;
+      const typeInterval = setInterval(() => {
+        if (charIndex < response.length) {
+          setMessages((prev) => {
+            const newMessages = [...prev];
+            const lastMessage = newMessages[newMessages.length - 1];
+            if (lastMessage.role === "assistant") {
+              lastMessage.content = response.slice(0, charIndex + 1);
+            }
+            return newMessages;
+          });
+          charIndex++;
+        } else {
+          clearInterval(typeInterval);
+          setIsTyping(false);
+        }
+      }, 15);
+    } catch (err) {
       setIsTyping(false);
-    }, 1000);
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    }
   };
 
   return (
@@ -277,6 +297,24 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
           )}
         </div>
       </div>
+
+      {/* Error Banner */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="px-4 py-2 bg-red-500/10 border-b border-red-500/20 flex items-center gap-2"
+        >
+          <AlertCircle className="w-4 h-4 text-red-400" />
+          <span className="text-sm text-red-400">{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="ml-auto text-xs text-red-400 hover:text-red-300"
+          >
+            Dismiss
+          </button>
+        </motion.div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
@@ -385,7 +423,8 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
               onKeyDown={handleKeyDown}
               placeholder={`Message ${persona.name}...`}
               rows={1}
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 resize-none min-h-[48px] max-h-[200px]"
+              disabled={isTyping}
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 resize-none min-h-[48px] max-h-[200px] disabled:opacity-50"
               style={{ height: "auto" }}
               onInput={(e) => {
                 const target = e.target as HTMLTextAreaElement;
