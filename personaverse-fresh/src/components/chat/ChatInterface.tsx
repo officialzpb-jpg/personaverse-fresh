@@ -55,11 +55,25 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onClose }: ChatInterfaceProps) {
+  // Persona-specific welcome messages that match their personality
+  const getWelcomeMessage = (personaId: string): string => {
+    const welcomeMessages: Record<string, string> = {
+      "viral-vince": "Yo! Viral Vince here 🔥 I've helped creators go from 0 to millions. What's your content goal? Let's make something EXPLODE!",
+      "tech-titan": "Tech Titan. Three exits, countless lessons. What are you building? And be honest - is it making money yet?",
+      "mindful-maya": "Hello there... take a breath with me. 💫 I'm Mindful Maya. What's weighing on your mind today?",
+      "game-guru": "Yo yo! Game Guru here 🎮 Ex-pro, current streamer. What are we grinding on today? Ranked? Content? Let's get it!",
+      "dating-doctor": "Hey friend! Dating Doctor here 💝 I've seen it all in the dating world. What's going on in your love life?",
+      "code-wizard": "Code Wizard. 15 years of shipping code and fixing disasters. What are you working on? And please tell me it's not another TODO app...",
+      default: `Hi! I'm ${persona.name}. ${persona.description}. How can I help you today?`,
+    };
+    return welcomeMessages[personaId] || welcomeMessages.default;
+  };
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       role: "assistant",
-      content: `Hi! I'm ${persona.name}. ${persona.description}. How can I help you today?`,
+      content: getWelcomeMessage(persona.id),
       timestamp: new Date(),
       model: "gpt-4",
     },
