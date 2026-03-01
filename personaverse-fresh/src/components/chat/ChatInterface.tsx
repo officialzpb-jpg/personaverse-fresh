@@ -37,7 +37,7 @@ interface Persona {
 const AI_MODELS = [
   { id: "gpt-4", name: "GPT-4", provider: "openai", icon: "🧠", description: "Most capable" },
   { id: "claude-3-sonnet-20240229", name: "Claude 3", provider: "anthropic", icon: "🎯", description: "Thoughtful" },
-  { id: "gemini-1.5-flash", name: "Gemini", provider: "google", icon: "✨", description: "Fast" },
+  { id: "gemini-1.5-flash-latest", name: "Gemini", provider: "google", icon: "✨", description: "Fast" },
 ];
 
 const DEFAULT_PERSONA: Persona = {

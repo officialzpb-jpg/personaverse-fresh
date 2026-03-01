@@ -12,7 +12,7 @@ const PROVIDERS = {
   },
   google: {
     url: "https://generativelanguage.googleapis.com/v1beta/models",
-    models: ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"],
+    models: ["gemini-1.5-flash-latest", "gemini-1.5-pro-latest", "gemini-pro"],
   },
 };
 
