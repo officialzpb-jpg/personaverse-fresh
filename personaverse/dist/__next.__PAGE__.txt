@@ -1,0 +1,13 @@
+1:"$Sreact.fragment"
+2:I[3265,["/_next/static/chunks/c70978385f320534.js","/_next/static/chunks/2c2e41b3784b04fa.js","/_next/static/chunks/4b6f65fb039a0bc5.js"],"Navbar"]
+3:I[85415,["/_next/static/chunks/c70978385f320534.js","/_next/static/chunks/2c2e41b3784b04fa.js","/_next/static/chunks/4b6f65fb039a0bc5.js"],"Hero"]
+4:I[32910,["/_next/static/chunks/c70978385f320534.js","/_next/static/chunks/2c2e41b3784b04fa.js","/_next/static/chunks/4b6f65fb039a0bc5.js"],"Features"]
+5:I[35210,["/_next/static/chunks/c70978385f320534.js","/_next/static/chunks/2c2e41b3784b04fa.js","/_next/static/chunks/4b6f65fb039a0bc5.js"],"PersonaShowcase"]
+6:I[35752,["/_next/static/chunks/c70978385f320534.js","/_next/static/chunks/2c2e41b3784b04fa.js","/_next/static/chunks/4b6f65fb039a0bc5.js"],"Pricing"]
+7:I[79324,["/_next/static/chunks/c70978385f320534.js","/_next/static/chunks/2c2e41b3784b04fa.js","/_next/static/chunks/4b6f65fb039a0bc5.js"],"Testimonials"]
+8:I[58234,["/_next/static/chunks/c70978385f320534.js","/_next/static/chunks/2c2e41b3784b04fa.js","/_next/static/chunks/4b6f65fb039a0bc5.js"],"Footer"]
+9:I[8438,["/_next/static/chunks/c70978385f320534.js","/_next/static/chunks/2c2e41b3784b04fa.js","/_next/static/chunks/4b6f65fb039a0bc5.js"],"ChatWidget"]
+a:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/d2be314c3ece3fbe.js"],"OutletBoundary"]
+b:"$Sreact.suspense"
+0:{"buildId":"mjNdivtCigX_15UBw1-7B","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"min-h-screen bg-[#0a0a0a]","children":[["$","$L2",null,{}],["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{}],["$","$L6",null,{}],["$","$L7",null,{}],["$","$L8",null,{}],["$","$L9",null,{}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/c70978385f320534.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/2c2e41b3784b04fa.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/4b6f65fb039a0bc5.js","async":true}]],["$","$La",null,{"children":["$","$b",null,{"name":"Next.MetadataOutlet","children":"$@c"}]}]]}],"loading":null,"isPartial":false}
+c:null
