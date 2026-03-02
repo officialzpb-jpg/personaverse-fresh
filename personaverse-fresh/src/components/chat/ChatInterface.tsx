@@ -98,6 +98,8 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
   const [error, setError] = useState<string | null>(null);
   const [currentChatId, setCurrentChatId] = useState<string | null>(chatId || null);
   const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [showSaved, setShowSaved] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -167,6 +169,8 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
           if (response.ok) {
             const data = await response.json();
             setCurrentChatId(data.chat.id);
+            setLastSaved(new Date());
+            setShowSaved(true);
             console.log("Chat created:", data.chat.id);
           } else {
             console.error("Failed to create chat:", await response.text());
@@ -183,6 +187,16 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
     const timeoutId = setTimeout(saveChat, 2000);
     return () => clearTimeout(timeoutId);
   }, [messages, isTyping, currentChatId, persona.id, isAuthenticated]);
+
+  // Show "Saved" indicator for 5 seconds after saving
+  useEffect(() => {
+    if (showSaved) {
+      const timeoutId = setTimeout(() => {
+        setShowSaved(false);
+      }, 5000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [showSaved]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -359,11 +373,11 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
                   {isSaving && (
                     <span className="text-blue-400">Saving...</span>
                   )}
-                  {!isSaving && currentChatId && (
+                  {!isSaving && showSaved && (
                     <span className="text-green-400">✓ Saved</span>
                   )}
-                  {!isSaving && !currentChatId && (
-                    <span className="text-gray-500">Will save...</span>
+                  {!isSaving && !showSaved && (
+                    <span className="text-gray-500">Ready</span>
                   )}
                 </>
               ) : (

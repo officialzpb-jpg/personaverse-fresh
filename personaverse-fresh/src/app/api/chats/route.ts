@@ -8,6 +8,8 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
+    console.log("GET /api/chats - Session user ID:", session?.user?.id);
+    
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -23,6 +25,8 @@ export async function GET(req: NextRequest) {
         updatedAt: true,
       },
     });
+
+    console.log("GET /api/chats - Found chats:", chats.length);
 
     return NextResponse.json({ chats });
   } catch (error) {
