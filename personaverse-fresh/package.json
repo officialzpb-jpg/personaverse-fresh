@@ -12,6 +12,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/client": "^5.22.0",
+    "@stripe/stripe-js": "^8.8.0",
     "@upstash/ratelimit": "^1.0.0",
     "@upstash/redis": "^1.25.0",
     "bcryptjs": "^3.0.3",
@@ -23,6 +24,7 @@
     "openai": "^4.24.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "stripe": "^20.4.0",
     "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {

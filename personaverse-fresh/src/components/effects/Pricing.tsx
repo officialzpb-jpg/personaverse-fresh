@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Check, Sparkles, Zap, Crown } from "lucide-react";
+import { Check, Sparkles, Zap, Crown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const plans = [
@@ -11,12 +13,12 @@ const plans = [
     description: "Get started with AI personalities",
     price: "$0",
     period: "forever",
+    planId: "free",
     icon: Sparkles,
     features: [
-      "50 chats per month",
-      "Access to 5 personas",
-      "GPT-3.5 model only",
-      "Basic persona creation",
+      "100 chats per month",
+      "Access to 12 personas",
+      "Basic chat history",
       "Community support",
     ],
     cta: "Get Started",
@@ -28,18 +30,17 @@ const plans = [
     description: "For power users and creators",
     price: "$15",
     period: "/month",
+    planId: "pro",
     icon: Zap,
     features: [
       "Unlimited chats",
-      "Access to all personas",
+      "Create up to 5 custom personas",
       "All AI models (GPT-4, Claude, Gemini)",
-      "Advanced persona creation",
-      "Fusion Mode access",
+      "Voice chat (coming soon)",
       "Priority support",
-      "API access (1,000 calls/month)",
     ],
-    cta: "Start Free Trial",
-    href: "/signup?plan=pro",
+    cta: "Subscribe",
+    href: "#",
     popular: true,
   },
   {
@@ -47,24 +48,62 @@ const plans = [
     description: "For creators and businesses",
     price: "$99",
     period: "/month",
+    planId: "creator",
     icon: Crown,
     features: [
       "Everything in Pro",
-      "Monetized personas",
-      "Fan chat automation",
+      "Unlimited custom personas",
+      "Monetize your personas",
       "Analytics dashboard",
-      "Revenue sharing (70%)",
-      "Custom branding",
-      "API access (50,000 calls/month)",
+      "API access",
       "Dedicated support",
     ],
-    cta: "Apply for Creator",
-    href: "/creators",
+    cta: "Subscribe",
+    href: "#",
     popular: false,
   },
 ];
 
 export function Pricing() {
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleSubscribe = async (planId: string) => {
+    if (!session) {
+      window.location.href = "/login";
+      return;
+    }
+
+    if (planId === "free") {
+      window.location.href = "/signup";
+      return;
+    }
+
+    setLoading(planId);
+
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ planId }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Failed to create checkout session");
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Something went wrong");
+    } finally {
+      setLoading(null);
+    }
+  };
+
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute inset-0">
@@ -168,17 +207,26 @@ export function Pricing() {
                 </ul>
                 
                 {/* CTA */}
-                <Link
-                  href={plan.href}
+                <button
+                  onClick={() => handleSubscribe(plan.planId)}
+                  disabled={loading === plan.planId}
                   className={cn(
                     "block w-full py-3 px-6 rounded-xl font-semibold text-center transition-all duration-200",
                     plan.popular
                       ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 glow-purple"
-                      : "glass text-white hover:bg-white/10"
+                      : "glass text-white hover:bg-white/10",
+                    loading === plan.planId && "opacity-50 cursor-not-allowed"
                   )}
                 >
-                  {plan.cta}
-                </Link>
+                  {loading === plan.planId ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Loading...
+                    </span>
+                  ) : (
+                    plan.cta
+                  )}
+                </button>
               </div>
             </motion.div>
           ))}
