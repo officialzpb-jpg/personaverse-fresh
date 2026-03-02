@@ -52,9 +52,10 @@ interface ChatInterfaceProps {
   persona?: Persona;
   embedded?: boolean;
   onClose?: () => void;
+  chatId?: string;
 }
 
-export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onClose }: ChatInterfaceProps) {
+export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onClose, chatId }: ChatInterfaceProps) {
   // Persona-specific welcome messages that match their personality
   const getWelcomeMessage = (personaId: string): string => {
     const welcomeMessages: Record<string, string> = {
@@ -90,8 +91,83 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0]);
   const [showModelSelector, setShowModelSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(chatId || null);
+  const [isSaving, setIsSaving] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Load existing chat if chatId is provided
+  useEffect(() => {
+    if (chatId) {
+      fetchChat(chatId);
+    }
+  }, [chatId]);
+
+  const fetchChat = async (id: string) => {
+    try {
+      const response = await fetch(`/api/chats/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.chat?.messages) {
+          setMessages(data.chat.messages);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching chat:", error);
+    }
+  };
+
+  // Auto-save chat when messages change
+  useEffect(() => {
+    const saveChat = async () => {
+      // Don't save if only welcome message or if currently typing
+      if (messages.length <= 1 || isTyping) return;
+
+      setIsSaving(true);
+      try {
+        const chatData = {
+          personaId: persona.id,
+          title: messages[1]?.content?.slice(0, 50) + "..." || "New Chat",
+          messages: messages.map(m => ({
+            id: m.id,
+            role: m.role,
+            content: m.content,
+            timestamp: m.timestamp,
+            model: m.model,
+          })),
+        };
+
+        if (currentChatId) {
+          // Update existing chat
+          await fetch(`/api/chats/${currentChatId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: chatData.messages }),
+          });
+        } else {
+          // Create new chat
+          const response = await fetch("/api/chats", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(chatData),
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            setCurrentChatId(data.chat.id);
+          }
+        }
+      } catch (error) {
+        console.error("Error saving chat:", error);
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
+    // Debounce save to avoid too many requests
+    const timeoutId = setTimeout(saveChat, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [messages, isTyping, currentChatId, persona.id]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -258,9 +334,17 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
           </div>
           <div>
             <div className="text-sm font-semibold text-white">{persona.name}</div>
-            <div className="flex items-center gap-1 text-xs text-green-400">
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-              Online
+            <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-1 text-green-400">
+                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                Online
+              </div>
+              {isSaving && (
+                <span className="text-gray-500">Saving...</span>
+              )}
+              {currentChatId && !isSaving && (
+                <span className="text-gray-500">Saved</span>
+              )}
             </div>
           </div>
         </div>
