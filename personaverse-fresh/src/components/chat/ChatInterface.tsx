@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 import { 
   Send, 
   Bot, 
@@ -56,6 +57,9 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onClose, chatId }: ChatInterfaceProps) {
+  const { data: session } = useSession();
+  const isAuthenticated = !!session?.user;
+  
   // Persona-specific welcome messages that match their personality
   const getWelcomeMessage = (personaId: string): string => {
     const welcomeMessages: Record<string, string> = {
@@ -117,11 +121,14 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
     }
   };
 
-  // Auto-save chat when messages change
+  // Auto-save chat when messages change (only for authenticated users)
   useEffect(() => {
     const saveChat = async () => {
-      // Don't save if only welcome message or if currently typing
-      if (messages.length <= 1 || isTyping) return;
+      // Don't save if:
+      // 1. User is not authenticated
+      // 2. Only welcome message exists
+      // 3. Currently typing
+      if (!isAuthenticated || messages.length <= 1 || isTyping) return;
 
       setIsSaving(true);
       try {
@@ -139,11 +146,15 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
 
         if (currentChatId) {
           // Update existing chat
-          await fetch(`/api/chats/${currentChatId}`, {
+          const response = await fetch(`/api/chats/${currentChatId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ messages: chatData.messages }),
           });
+          
+          if (!response.ok) {
+            console.error("Failed to update chat:", await response.text());
+          }
         } else {
           // Create new chat
           const response = await fetch("/api/chats", {
@@ -155,6 +166,9 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
           if (response.ok) {
             const data = await response.json();
             setCurrentChatId(data.chat.id);
+            console.log("Chat created:", data.chat.id);
+          } else {
+            console.error("Failed to create chat:", await response.text());
           }
         }
       } catch (error) {
@@ -167,7 +181,7 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
     // Debounce save to avoid too many requests
     const timeoutId = setTimeout(saveChat, 2000);
     return () => clearTimeout(timeoutId);
-  }, [messages, isTyping, currentChatId, persona.id]);
+  }, [messages, isTyping, currentChatId, persona.id, isAuthenticated]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -339,11 +353,17 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
                 <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
                 Online
               </div>
-              {isSaving && (
-                <span className="text-gray-500">Saving...</span>
-              )}
-              {currentChatId && !isSaving && (
-                <span className="text-gray-500">Saved</span>
+              {isAuthenticated ? (
+                <>
+                  {isSaving && (
+                    <span className="text-gray-500">Saving...</span>
+                  )}
+                  {currentChatId && !isSaving && (
+                    <span className="text-gray-500">Saved</span>
+                  )}
+                </>
+              ) : (
+                <span className="text-gray-500">Sign in to save chats</span>
               )}
             </div>
           </div>
@@ -612,7 +632,7 @@ export function ChatWidget() {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed bottom-24 right-6 z-50 w-96 h-[600px] glass-card rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/10"
+            className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 h-[500px] sm:h-[600px] glass-card rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/10"
           >
             <ChatInterface persona={WIDGET_PERSONA} embedded onClose={() => setIsOpen(false)} />
           </motion.div>
