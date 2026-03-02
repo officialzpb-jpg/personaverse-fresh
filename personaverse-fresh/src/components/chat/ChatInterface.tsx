@@ -477,13 +477,15 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
             className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
           >
             {/* Avatar */}
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${
               message.role === "user"
                 ? "bg-white/10"
                 : `bg-gradient-to-br ${persona.color}`
             }`}>
               {message.role === "user" ? (
                 <User className="w-4 h-4 text-gray-400" />
+              ) : persona.avatar?.startsWith("data:") || persona.avatar?.startsWith("http") ? (
+                <img src={persona.avatar} alt="" className="w-full h-full object-cover" />
               ) : (
                 <span className="text-sm">{persona.avatar}</span>
               )}
