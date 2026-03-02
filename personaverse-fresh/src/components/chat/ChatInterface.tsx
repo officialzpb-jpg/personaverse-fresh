@@ -58,6 +58,7 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
   // Persona-specific welcome messages that match their personality
   const getWelcomeMessage = (personaId: string): string => {
     const welcomeMessages: Record<string, string> = {
+      "site-assistant": "Hi! I'm your PersonaVerse Assistant 🤖 I can help you explore personas, create your own, or answer questions about the platform. What would you like to do?",
       "viral-vince": "Yo! Viral Vince here 🔥 I've helped creators go from 0 to millions. What's your content goal? Let's make something EXPLODE!",
       "tech-titan": "Tech Titan. Three exits, countless lessons. What are you building? And be honest - is it making money yet?",
       "mindful-maya": "Hello there... take a breath with me. 💫 I'm Mindful Maya. What's weighing on your mind today?",
@@ -474,13 +475,13 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
   );
 }
 
-// Default persona for the floating chat widget
+// Default persona for the floating chat widget - Site Assistant
 const WIDGET_PERSONA: Persona = {
-  id: "viral-vince",
-  name: "Viral Vince",
-  avatar: "🔥",
-  color: "from-orange-500 to-red-500",
-  description: "Master of viral content strategy",
+  id: "site-assistant",
+  name: "PersonaVerse Assistant",
+  avatar: "🤖",
+  color: "from-purple-500 to-blue-500",
+  description: "Your guide to PersonaVerse",
 };
 
 // Floating Chat Widget for embedding on any page

@@ -13,10 +13,21 @@ import {
 import Link from "next/link";
 import { personasData } from "./data";
 
+// Map numeric IDs to persona keys
+const PERSONA_ID_MAP: Record<string, string> = {
+  "1": "viral-vince",
+  "2": "tech-titan",
+  "3": "mindful-maya",
+  "4": "game-guru",
+  "5": "dating-doctor",
+  "6": "code-wizard",
+};
+
 export default function PersonaChatClient() {
   const params = useParams();
   const personaId = params.id as string;
   const persona = personasData[personaId];
+  const personaKey = PERSONA_ID_MAP[personaId] || personaId;
 
   if (!persona) {
     return (
@@ -145,7 +156,7 @@ export default function PersonaChatClient() {
         <div className="flex-1 flex flex-col">
           <ChatInterface 
             persona={{
-              id: personaId,
+              id: personaKey,
               name: persona.name,
               avatar: persona.avatar,
               color: persona.color,
