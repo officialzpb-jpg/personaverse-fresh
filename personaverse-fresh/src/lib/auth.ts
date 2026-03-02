@@ -29,7 +29,6 @@ declare module "next-auth/jwt" {
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
-  trustHost: true,
   providers: [
     CredentialsProvider({
       name: "credentials",
