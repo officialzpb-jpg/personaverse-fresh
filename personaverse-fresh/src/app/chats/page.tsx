@@ -60,7 +60,9 @@ export default function ChatsPage() {
 
   const fetchChats = async () => {
     try {
-      const response = await fetch("/api/chats");
+      const response = await fetch("/api/chats", {
+        credentials: "include",
+      });
       if (!response.ok) throw new Error("Failed to fetch chats");
       const data = await response.json();
       setChats(data.chats);
@@ -76,6 +78,7 @@ export default function ChatsPage() {
     try {
       const response = await fetch(`/api/chats/${chatId}`, {
         method: "DELETE",
+        credentials: "include",
       });
       if (response.ok) {
         setChats(chats.filter((chat) => chat.id !== chatId));

@@ -152,6 +152,7 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
           const response = await fetch(`/api/chats/${currentChatId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ messages: chatData.messages }),
           });
           
@@ -163,6 +164,7 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
           const response = await fetch("/api/chats", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify(chatData),
           });
           
