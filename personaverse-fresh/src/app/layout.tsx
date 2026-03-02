@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ChatWidget } from "@/components/chat/ChatInterface";
+import AuthProvider from "@/components/providers/AuthProvider";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -96,8 +97,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-[#0a0a0a] text-white`}>
-        {children}
-        <ChatWidget />
+        <AuthProvider>
+          {children}
+          <ChatWidget />
+        </AuthProvider>
       </body>
     </html>
   );

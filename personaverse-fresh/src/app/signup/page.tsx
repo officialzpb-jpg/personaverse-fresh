@@ -3,12 +3,48 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Sparkles, Mail, Lock, User, Github, Twitter, Eye, EyeOff, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Sparkles, Mail, Lock, User, Github, Twitter, Eye, EyeOff, Check, Loader2 } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create account");
+      }
+
+      // Redirect to login after successful signup
+      router.push("/login?registered=true");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] pt-16 flex flex-col">
@@ -35,29 +71,14 @@ export default function SignupPage() {
             transition={{ delay: 0.1 }}
             className="glass-card rounded-2xl p-8"
           >
-            {/* Social Signup */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <button className="flex items-center justify-center gap-2 py-2.5 glass rounded-lg text-sm text-white hover:bg-white/5 transition-colors">
-                <Github className="w-4 h-4" />
-                GitHub
-              </button>
-              <button className="flex items-center justify-center gap-2 py-2.5 glass rounded-lg text-sm text-white hover:bg-white/5 transition-colors">
-                <Twitter className="w-4 h-4" />
-                Twitter
-              </button>
-            </div>
-
-            <div className="relative mb-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10" />
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                {error}
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-[#0f0f0f] text-gray-400">Or continue with email</span>
-              </div>
-            </div>
+            )}
 
             {/* Form */}
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                 <div className="relative">
@@ -65,6 +86,9 @@ export default function SignupPage() {
                   <input
                     type="text"
                     placeholder="John Doe"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
                     className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50"
                   />
                 </div>
@@ -77,6 +101,9 @@ export default function SignupPage() {
                   <input
                     type="email"
                     placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
                     className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50"
                   />
                 </div>
@@ -89,6 +116,10 @@ export default function SignupPage() {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    required
+                    minLength={8}
                     className="w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50"
                   />
                   <button
@@ -106,27 +137,21 @@ export default function SignupPage() {
                   <Check className="w-4 h-4 text-green-400" />
                   <span>At least 8 characters</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Check className="w-4 h-4 text-green-400" />
-                  <span>Contains a number or symbol</span>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2">
-                <input type="checkbox" className="mt-1 rounded border-white/10 bg-white/5 text-purple-500" />
-                <span className="text-sm text-gray-400">
-                  I agree to the{" "}
-                  <Link href="/trust#terms" className="text-purple-400 hover:text-purple-300">Terms of Service</Link>
-                  {" "}and{" "}
-                  <Link href="/trust#privacy" className="text-purple-400 hover:text-purple-300">Privacy Policy</Link>
-                </span>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold text-white hover:from-purple-500 hover:to-blue-500 transition-all"
+                disabled={isLoading}
+                className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold text-white hover:from-purple-500 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Create Account
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
               </button>
             </form>
 

@@ -1,0 +1,2 @@
+-- This is an empty migration for now.
+-- We'll create the tables using Vercel's interface or run migration manually

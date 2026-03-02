@@ -3,12 +3,50 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Sparkles, Mail, Lock, Github, Twitter, Eye, EyeOff, Shield } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { Sparkles, Mail, Lock, Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const justRegistered = searchParams.get("registered") === "true";
+  
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      // Redirect to dashboard or home
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid email or password");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] pt-16 flex flex-col">
@@ -35,29 +73,21 @@ export default function LoginPage() {
             transition={{ delay: 0.1 }}
             className="glass-card rounded-2xl p-8"
           >
-            {/* Social Login */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <button className="flex items-center justify-center gap-2 py-2.5 glass rounded-lg text-sm text-white hover:bg-white/5 transition-colors">
-                <Github className="w-4 h-4" />
-                GitHub
-              </button>
-              <button className="flex items-center justify-center gap-2 py-2.5 glass rounded-lg text-sm text-white hover:bg-white/5 transition-colors">
-                <Twitter className="w-4 h-4" />
-                Twitter
-              </button>
-            </div>
+            {justRegistered && (
+              <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                Account created successfully! Please sign in.
+              </div>
+            )}
 
-            <div className="relative mb-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10" />
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                {error}
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-[#0f0f0f] text-gray-400">Or continue with</span>
-              </div>
-            </div>
+            )}
 
             {/* Form */}
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
                 <div className="relative">
@@ -65,6 +95,9 @@ export default function LoginPage() {
                   <input
                     type="email"
                     placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
                     className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50"
                   />
                 </div>
@@ -77,6 +110,9 @@ export default function LoginPage() {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    required
                     className="w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50"
                   />
                   <button
@@ -101,9 +137,17 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold text-white hover:from-purple-500 hover:to-blue-500 transition-all"
+                disabled={isLoading}
+                className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold text-white hover:from-purple-500 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Sign In
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </button>
             </form>
 
@@ -113,17 +157,6 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </p>
-
-            {/* Admin Login Link */}
-            <div className="mt-6 pt-6 border-t border-white/5 text-center">
-              <Link 
-                href="/admin/login" 
-                className="inline-flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 transition-colors"
-              >
-                <Shield className="w-4 h-4" />
-                Administrator Login
-              </Link>
-            </div>
           </motion.div>
         </div>
       </section>
