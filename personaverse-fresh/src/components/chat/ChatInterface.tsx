@@ -474,6 +474,15 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
   );
 }
 
+// Default persona for the floating chat widget
+const WIDGET_PERSONA: Persona = {
+  id: "viral-vince",
+  name: "Viral Vince",
+  avatar: "🔥",
+  color: "from-orange-500 to-red-500",
+  description: "Master of viral content strategy",
+};
+
 // Floating Chat Widget for embedding on any page
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -514,7 +523,7 @@ export function ChatWidget() {
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed bottom-24 right-6 z-50 w-96 h-[600px] glass-card rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/10"
           >
-            <ChatInterface embedded onClose={() => setIsOpen(false)} />
+            <ChatInterface persona={WIDGET_PERSONA} embedded onClose={() => setIsOpen(false)} />
           </motion.div>
         )}
       </AnimatePresence>
