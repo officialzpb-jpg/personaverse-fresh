@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, X, Sparkles, Zap, User, Settings, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, Sparkles, Zap, User, Settings, LogOut, LayoutDashboard, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
