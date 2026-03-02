@@ -83,7 +83,7 @@ export default function PersonaChatPage() {
           persona={{
             id: persona.id,
             name: persona.name,
-            avatar: isImageAvatar ? "🤖" : persona.avatar,
+            avatar: persona.avatar || "🤖",
             color: "from-purple-500 to-blue-500",
             description: persona.description,
             systemPrompt: persona.systemPrompt,

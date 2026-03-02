@@ -360,8 +360,12 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
       {/* Chat Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${persona.color} flex items-center justify-center text-xl`}>
-            {persona.avatar}
+          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${persona.color} flex items-center justify-center text-xl overflow-hidden`}>
+            {persona.avatar?.startsWith("data:") || persona.avatar?.startsWith("http") ? (
+              <img src={persona.avatar} alt="" className="w-full h-full object-cover" />
+            ) : (
+              persona.avatar
+            )}
           </div>
           <div>
             <div className="text-sm font-semibold text-white">{persona.name}</div>
