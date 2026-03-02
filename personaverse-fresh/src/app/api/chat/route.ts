@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 // Supported AI providers
 const PROVIDERS = {
@@ -336,6 +337,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Get system prompt - check hardcoded first, then database
+    let systemPrompt = PERSONA_PROMPTS[persona] || PERSONA_PROMPTS.default;
+    
+    // If not found in hardcoded prompts, try to fetch from database
+    if (!PERSONA_PROMPTS[persona] && persona !== "default") {
+      try {
+        const customPersona = await prisma.persona.findUnique({
+          where: { id: persona },
+        });
+        if (customPersona) {
+          systemPrompt = customPersona.systemPrompt;
+        }
+      } catch (e) {
+        console.error("Error fetching custom persona:", e);
+      }
+    }
+
     // Get API key based on provider
     let apiKey: string | undefined;
     let apiUrl: string;
@@ -343,8 +361,6 @@ export async function POST(req: NextRequest) {
     let headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
-
-    const systemPrompt = PERSONA_PROMPTS[persona] || PERSONA_PROMPTS.default;
 
     switch (provider) {
       case "openai":
