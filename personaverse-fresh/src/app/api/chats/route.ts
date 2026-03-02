@@ -14,6 +14,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    console.log("GET /api/chats - Querying database for user:", session.user.id);
+
     const chats = await prisma.chat.findMany({
       where: { userId: session.user.id },
       orderBy: { updatedAt: "desc" },
@@ -29,10 +31,13 @@ export async function GET(req: NextRequest) {
     console.log("GET /api/chats - Found chats:", chats.length);
 
     return NextResponse.json({ chats });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Get chats error:", error);
+    console.error("Error message:", error.message);
+    console.error("Error code:", error.code);
+    console.error("Error meta:", error.meta);
     return NextResponse.json(
-      { error: "Failed to fetch chats" },
+      { error: "Failed to fetch chats", details: error.message },
       { status: 500 }
     );
   }
