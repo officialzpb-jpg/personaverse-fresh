@@ -39,11 +39,16 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
+    console.log("POST /api/chats - Session:", session?.user?.id ? "Found user" : "No user");
+    
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { personaId, title, messages } = await req.json();
+    const body = await req.json();
+    console.log("POST /api/chats - Body:", { personaId: body.personaId, title: body.title, messagesCount: body.messages?.length });
+
+    const { personaId, title, messages } = body;
 
     const chat = await prisma.chat.create({
       data: {
@@ -53,6 +58,8 @@ export async function POST(req: NextRequest) {
         messages: messages || [],
       },
     });
+
+    console.log("POST /api/chats - Created chat:", chat.id);
 
     return NextResponse.json({ chat }, { status: 201 });
   } catch (error) {

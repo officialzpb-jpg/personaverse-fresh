@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { 
@@ -356,14 +357,19 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
               {isAuthenticated ? (
                 <>
                   {isSaving && (
-                    <span className="text-gray-500">Saving...</span>
+                    <span className="text-blue-400">Saving...</span>
                   )}
-                  {currentChatId && !isSaving && (
-                    <span className="text-gray-500">Saved</span>
+                  {!isSaving && currentChatId && (
+                    <span className="text-green-400">✓ Saved</span>
+                  )}
+                  {!isSaving && !currentChatId && (
+                    <span className="text-gray-500">Will save...</span>
                   )}
                 </>
               ) : (
-                <span className="text-gray-500">Sign in to save chats</span>
+                <Link href="/login" className="text-amber-400 hover:text-amber-300 underline">
+                  Sign in to save
+                </Link>
               )}
             </div>
           </div>
