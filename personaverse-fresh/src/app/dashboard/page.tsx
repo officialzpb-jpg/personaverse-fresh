@@ -1,236 +1,264 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { 
-  LayoutDashboard, 
   MessageSquare, 
   Users, 
-  DollarSign, 
-  Settings,
-  TrendingUp,
-  BarChart3,
-  Plus,
-  MoreVertical,
-  Sparkles
+  TrendingUp, 
+  Sparkles,
+  ArrowRight,
+  Bot,
+  Clock,
+  Settings
 } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { useEffect, useState } from "react";
 
-const stats = [
-  { label: "Total Chats", value: "1,247", change: "+12%", icon: MessageSquare },
-  { label: "Active Personas", value: "3", change: "+1", icon: Users },
-  { label: "Earnings", value: "$0.00", change: "—", icon: DollarSign },
-  { label: "Avg. Rating", value: "4.8", change: "+0.2", icon: TrendingUp },
-];
+interface Chat {
+  id: string;
+  personaId: string;
+  title: string;
+  updatedAt: string;
+}
 
-const recentChats = [
-  { persona: "Tech Titan", user: "Anonymous", message: "How do I find product-market fit?", time: "2 min ago" },
-  { persona: "Mindful Maya", user: "Sarah K.", message: "Tips for daily meditation?", time: "15 min ago" },
-  { persona: "Viral Vince", user: "Mike R.", message: "What's trending on TikTok?", time: "1 hour ago" },
-];
-
-const myPersonas = [
-  { name: "Tech Mentor", role: "Career Coach", chats: 456, rating: 4.9, status: "Active" },
-  { name: "Code Helper", role: "Dev Assistant", chats: 234, rating: 4.7, status: "Active" },
-  { name: "Startup Advisor", role: "Business", chats: 128, rating: 4.8, status: "Draft" },
-];
+const PERSONA_NAMES: Record<string, string> = {
+  "viral-vince": "Viral Vince",
+  "tech-titan": "Tech Titan",
+  "mindful-maya": "Mindful Maya",
+  "game-guru": "Game Guru",
+  "dating-doctor": "Dating Doctor",
+  "code-wizard": "Code Wizard",
+  "fit-felix": "Fit Felix",
+  "chef-carlos": "Chef Carlos",
+  "lingua-lisa": "Lingua Lisa",
+  "money-mike": "Money Mike",
+  "travel-tara": "Travel Tara",
+  "style-sam": "Style Sam",
+};
 
 export default function DashboardPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [recentChats, setRecentChats] = useState<Chat[]>([]);
+  const [stats, setStats] = useState({
+    totalChats: 0,
+    totalPersonas: 12,
+    favoritePersona: "",
+  });
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+      return;
+    }
+
+    if (status === "authenticated") {
+      fetchRecentChats();
+    }
+  }, [status, router]);
+
+  const fetchRecentChats = async () => {
+    try {
+      const response = await fetch("/api/chats");
+      if (response.ok) {
+        const data = await response.json();
+        setRecentChats(data.chats?.slice(0, 5) || []);
+        setStats(prev => ({
+          ...prev,
+          totalChats: data.chats?.length || 0,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen bg-[#0a0a0a] pt-16">
+        <Navbar />
+        <div className="flex items-center justify-center h-[calc(100vh-64px)]">
+          <div className="animate-pulse text-purple-500">Loading...</div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] pt-16">
       <Navbar />
-      
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 glass border-r border-white/5 min-h-screen hidden lg:block">
-          <div className="p-4">
-            <div className="flex items-center gap-3 px-4 py-3 bg-purple-500/20 rounded-xl mb-2">
-              <LayoutDashboard className="w-5 h-5 text-purple-400" />
-              <span className="font-medium text-white">Dashboard</span>
-            </div>
-            
-            <Link href="#" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-              <MessageSquare className="w-5 h-5" />
-              <span>Chats</span>
-            </Link>
-            
-            <Link href="#" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-              <Users className="w-5 h-5" />
-              <span>My Personas</span>
-            </Link>
-            
-            <Link href="#" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-              <DollarSign className="w-5 h-5" />
-              <span>Earnings</span>
-            </Link>
-            
-            <Link href="#" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-              <BarChart3 className="w-5 h-5" />
-              <span>Analytics</span>
-            </Link>
-            
-            <Link href="#" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-              <Settings className="w-5 h-5" />
-              <span>Settings</span>
-            </Link>
-          </div>
-        </aside>
 
-        {/* Main Content */}
-        <div className="flex-1 p-6 lg:p-8">
+      <section className="py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Welcome Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            className="mb-12"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-2xl font-bold text-white">Welcome back, Zay</h1>
-                <p className="text-gray-400">Here&apos;s what&apos;s happening with your personas</p>
+            <h1 className="text-4xl font-bold text-white mb-2">
+              Welcome back, {session?.user?.name || "User"}!
+            </h1>
+            <p className="text-gray-400 text-lg">
+              Ready to chat with your favorite AI personas?
+            </p>
+          </motion.div>
+
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+          >
+            <Link
+              href="/personas"
+              className="glass-card rounded-2xl p-6 hover:bg-white/5 transition-colors group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                  <Bot className="w-6 h-6 text-white" />
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
               </div>
-              
-              <Link
-                href="/create"
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-medium text-white hover:from-purple-500 hover:to-blue-500 transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                Create Persona
-              </Link>
-            </div>
+              <h3 className="text-xl font-semibold text-white mb-1">Browse Personas</h3>
+              <p className="text-gray-400 text-sm">Explore 12 unique AI personalities</p>
+            </Link>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="glass rounded-2xl p-4"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <stat.icon className="w-5 h-5 text-gray-400" />
-                    <span className="text-xs text-green-400">{stat.change}</span>
-                  </div>
-                  
-                  <div className="text-2xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm text-gray-400">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
+            <Link
+              href="/chats"
+              className="glass-card rounded-2xl p-6 hover:bg-white/5 transition-colors group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                  <MessageSquare className="w-6 h-6 text-white" />
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-1">Chat History</h3>
+              <p className="text-gray-400 text-sm">Continue your conversations</p>
+            </Link>
 
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* Recent Chats */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="glass rounded-2xl p-6"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-white">Recent Chats</h2>
-                  <Link href="#" className="text-sm text-purple-400 hover:text-purple-300">View all</Link>
+            <Link
+              href="/create"
+              className="glass-card rounded-2xl p-6 hover:bg-white/5 transition-colors group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                
-                <div className="space-y-4">
-                  {recentChats.map((chat, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 glass rounded-xl">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-sm font-medium text-white">
-                        {chat.persona[0]}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-white">{chat.persona}</span>
-                          <span className="text-xs text-gray-500">{chat.time}</span>
-                        </div>
-                        
-                        <p className="text-sm text-gray-400 truncate">{chat.message}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-1">Create Persona</h3>
+              <p className="text-gray-400 text-sm">Build your own AI character</p>
+            </Link>
+          </motion.div>
 
-              {/* My Personas */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="glass rounded-2xl p-6"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-white">My Personas</h2>
-                  <Link href="#" className="text-sm text-purple-400 hover:text-purple-300">Manage</Link>
-                </div>
-                
-                <div className="space-y-4">
-                  {myPersonas.map((persona, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 glass rounded-xl">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg">
-                          🤖
-                        </div>
-                        
-                        <div>
-                          <div className="font-medium text-white">{persona.name}</div>
-                          <div className="text-sm text-gray-400">{persona.role}</div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <div className="text-sm text-white">{persona.chats} chats</div>
-                          <div className="text-xs text-gray-400">⭐ {persona.rating}</div>
-                        </div>
-                        
-                        <span className={`px-2 py-1 rounded-lg text-xs ${
-                          persona.status === "Active" 
-                            ? "bg-green-500/20 text-green-400" 
-                            : "bg-yellow-500/20 text-yellow-400"
-                        }`}>
-                          {persona.status}
-                        </span>
-                        
-                        <button className="text-gray-400 hover:text-white">
-                          <MoreVertical className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Upgrade CTA */}
+          {/* Stats & Recent Chats */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Stats */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="mt-8 glass-card rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4"
+              transition={{ delay: 0.2 }}
+              className="lg:col-span-1"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
+              <h2 className="text-xl font-semibold text-white mb-6">Your Stats</h2>
+              
+              <div className="space-y-4">
+                <div className="glass-card rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                      <MessageSquare className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-white">{stats.totalChats}</div>
+                      <div className="text-sm text-gray-400">Total Chats</div>
+                    </div>
+                  </div>
                 </div>
-                
-                <div>
-                  <h3 className="font-semibold text-white">Upgrade to Pro</h3>
-                  <p className="text-sm text-gray-400">Unlock unlimited chats, all AI models, and persona creation</p>
+
+                <div className="glass-card rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                      <Users className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-white">{stats.totalPersonas}</div>
+                      <div className="text-sm text-gray-400">Available Personas</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              
-              <Link
-                href="/pricing"
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-medium text-white hover:from-purple-500 hover:to-blue-500 transition-all whitespace-nowrap"
-              >
-                View Plans
-              </Link>
             </motion.div>
-          </motion.div>
+
+            {/* Recent Chats */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="lg:col-span-2"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-white">Recent Chats</h2>
+                <Link
+                  href="/chats"
+                  className="text-sm text-purple-400 hover:text-purple-300"
+                >
+                  View all
+                </Link>
+              </div>
+
+              {recentChats.length === 0 ? (
+                <div className="glass-card rounded-xl p-8 text-center">
+                  <MessageSquare className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                  <p className="text-gray-400">No chats yet. Start chatting with a persona!</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {recentChats.map((chat) => (
+                    <Link
+                      key={chat.id}
+                      href={`/chat/${chat.id}`}
+                      className="glass-card rounded-xl p-4 hover:bg-white/5 transition-colors flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
+                          <Bot className="w-5 h-5 text-purple-400" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-white">
+                            {chat.title || `Chat with ${PERSONA_NAMES[chat.personaId] || "AI"}`}
+                          </h3>
+                          <div className="flex items-center gap-2 text-sm text-gray-400">
+                            <span>{PERSONA_NAMES[chat.personaId] || "AI"}</span>
+                            <span>•</span>
+                            <Clock className="w-3 h-3" />
+                            <span>{formatDate(chat.updatedAt)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-gray-400" />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </div>
         </div>
-      </div>
+      </section>
 
       <Footer />
     </main>
