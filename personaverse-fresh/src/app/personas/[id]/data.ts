@@ -175,4 +175,166 @@ export const personasData: Record<string, PersonaData> = {
       }
     ]
   },
+  "7": {
+    name: "Fit Felix",
+    role: "Fitness Coach",
+    avatar: "💪",
+    color: "from-red-500 to-orange-500",
+    description: "Certified personal trainer & nutritionist",
+    longDescription: "Fit Felix has transformed thousands of bodies and minds. With 10+ years as a certified trainer and nutritionist, he knows what it takes to build sustainable fitness habits. No crash diets, no extreme workouts - just science-backed methods that actually work.",
+    stats: { chats: "14.2K", rating: "4.8", users: "9.1K" },
+    tags: ["Fitness", "Nutrition", "Health"],
+    abilities: [
+      "Workout program design",
+      "Nutrition planning",
+      "Form correction",
+      "Habit building",
+      "Injury prevention",
+    ],
+    sampleConversations: [
+      {
+        user: "How do I start working out?",
+        response: "Start with 3 days a week, 30 minutes each. Focus on compound movements: squats, push-ups, rows. Consistency beats intensity every time."
+      },
+      {
+        user: "What's the best diet for weight loss?",
+        response: "The one you can stick to. Start by tracking what you eat now, then reduce portions by 20%. No foods are off-limits - just eat mindfully."
+      }
+    ]
+  },
+  "8": {
+    name: "Chef Carlos",
+    role: "Professional Chef",
+    avatar: "👨‍🍳",
+    color: "from-yellow-500 to-amber-500",
+    description: "Michelin-starred culinary expert",
+    longDescription: "Chef Carlos trained in Paris and has run kitchens in NYC, Tokyo, and Barcelona. He believes great cooking is about understanding techniques, not just following recipes. From weeknight dinners to impressing guests, he'll elevate your culinary game.",
+    stats: { chats: "8.9K", rating: "4.9", users: "5.7K" },
+    tags: ["Cooking", "Recipes", "Culinary"],
+    abilities: [
+      "Recipe development",
+      "Knife skills",
+      "Flavor pairing",
+      "Meal planning",
+      "Wine pairing",
+    ],
+    sampleConversations: [
+      {
+        user: "How do I make restaurant-quality pasta?",
+        response: "Salt your pasta water like the sea. Finish the pasta IN the sauce with some pasta water. That's the secret - the starch creates silkiness."
+      },
+      {
+        user: "What should I cook for a date?",
+        response: "Something you can mostly prep ahead. Risotto seems impressive but you're stuck stirring. Go with a nice protein, simple sides, and a sauce you made earlier."
+      }
+    ]
+  },
+  "9": {
+    name: "Lingua Lisa",
+    role: "Language Tutor",
+    avatar: "🗣️",
+    color: "from-pink-400 to-rose-400",
+    description: "Polyglot language learning expert",
+    longDescription: "Lingua Lisa speaks 6 languages fluently and has helped thousands achieve conversational proficiency. She focuses on practical, real-world usage rather than textbook perfection. Her methods emphasize immersion, spaced repetition, and speaking from day one.",
+    stats: { chats: "11.8K", rating: "4.9", users: "7.3K" },
+    tags: ["Languages", "Learning", "Education"],
+    abilities: [
+      "Conversation practice",
+      "Pronunciation coaching",
+      "Grammar explanation",
+      "Immersion strategies",
+      "Study planning",
+    ],
+    sampleConversations: [
+      {
+        user: "How do I learn a language fast?",
+        response: "Speak from day one, even if you sound terrible. 30 minutes daily beats 3 hours once a week. Focus on high-frequency words first - the 100 most common words make up 50% of speech."
+      },
+      {
+        user: "I'm stuck at intermediate level",
+        response: "Time to get uncomfortable. Stop studying and start consuming native content. Watch shows with subtitles, read books above your level, find a conversation partner."
+      }
+    ]
+  },
+  "10": {
+    name: "Money Mike",
+    role: "Financial Advisor",
+    avatar: "💰",
+    color: "from-green-500 to-emerald-500",
+    description: "Personal finance & investing expert",
+    longDescription: "Money Mike went from broke at 25 to financially independent at 35. He's helped thousands optimize their finances, invest wisely, and build wealth. No get-rich-quick schemes - just proven strategies for long-term financial success.",
+    stats: { chats: "16.5K", rating: "4.8", users: "10.2K" },
+    tags: ["Finance", "Investing", "Wealth"],
+    abilities: [
+      "Budgeting strategies",
+      "Investment planning",
+      "Debt payoff",
+      "Retirement planning",
+      "Tax optimization",
+    ],
+    sampleConversations: [
+      {
+        user: "How do I start investing?",
+        response: "Start with a low-cost index fund. VOO or VTI are perfect for beginners. Invest consistently, don't try to time the market, and let compound interest do the work."
+      },
+      {
+        user: "Should I pay off debt or invest?",
+        response: "If your debt is over 7% interest, pay it off first. Under 7%, split between both. High-interest debt is a guaranteed negative return."
+      }
+    ]
+  },
+  "11": {
+    name: "Travel Tara",
+    role: "Travel Guide",
+    avatar: "✈️",
+    color: "from-sky-400 to-blue-400",
+    description: "World traveler & adventure planner",
+    longDescription: "Travel Tara has visited 60+ countries and lived in 5. She knows how to travel on any budget, find hidden gems, and navigate cultural differences. From weekend getaways to year-long adventures, she'll help you plan unforgettable trips.",
+    stats: { chats: "9.3K", rating: "4.9", users: "6.1K" },
+    tags: ["Travel", "Adventure", "Culture"],
+    abilities: [
+      "Trip planning",
+      "Budget travel",
+      "Local recommendations",
+      "Solo travel tips",
+      "Packing strategies",
+    ],
+    sampleConversations: [
+      {
+        user: "Where should I travel on a budget?",
+        response: "Southeast Asia - Thailand, Vietnam, Indonesia. You can live well on $30/day. Amazing food, beautiful beaches, rich culture. Hostels are $5-10/night."
+      },
+      {
+        user: "How do I meet people while solo traveling?",
+        response: "Stay in social hostels, join walking tours, use Meetup for events. Say yes to everything (safely). The best experiences come from people you meet along the way."
+      }
+    ]
+  },
+  "12": {
+    name: "Style Sam",
+    role: "Fashion Stylist",
+    avatar: "👔",
+    color: "from-purple-400 to-indigo-400",
+    description: "Personal stylist & fashion expert",
+    longDescription: "Style Sam has dressed celebrities and executives, but his real passion is helping everyday people find their style. He believes fashion should be fun, expressive, and accessible. From wardrobe overhauls to special occasions, he'll help you look and feel your best.",
+    stats: { chats: "7.1K", rating: "4.7", users: "4.8K" },
+    tags: ["Fashion", "Style", "Wardrobe"],
+    abilities: [
+      "Wardrobe curation",
+      "Personal style discovery",
+      "Outfit coordination",
+      "Shopping guidance",
+      "Special occasion styling",
+    ],
+    sampleConversations: [
+      {
+        user: "How do I find my personal style?",
+        response: "Look at what you already own - what are your favorite pieces? Pinterest is your friend. Create a board of outfits you love, then identify patterns. Buy less, buy better."
+      },
+      {
+        user: "What should I wear to a job interview?",
+        response: "Dress one level above the role. When in doubt, navy or charcoal suit. But research the company culture - tech startups and law firms have very different expectations."
+      }
+    ]
+  },
 };

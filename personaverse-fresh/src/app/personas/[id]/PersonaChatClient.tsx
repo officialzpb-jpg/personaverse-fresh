@@ -21,6 +21,12 @@ const PERSONA_ID_MAP: Record<string, string> = {
   "4": "game-guru",
   "5": "dating-doctor",
   "6": "code-wizard",
+  "7": "fit-felix",
+  "8": "chef-carlos",
+  "9": "lingua-lisa",
+  "10": "money-mike",
+  "11": "travel-tara",
+  "12": "style-sam",
 };
 
 export default function PersonaChatClient() {

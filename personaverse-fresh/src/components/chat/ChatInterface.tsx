@@ -65,6 +65,12 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
       "game-guru": "Yo yo! Game Guru here 🎮 Ex-pro, current streamer. What are we grinding on today? Ranked? Content? Let's get it!",
       "dating-doctor": "Hey friend! Dating Doctor here 💝 I've seen it all in the dating world. What's going on in your love life?",
       "code-wizard": "Code Wizard. 15 years of shipping code and fixing disasters. What are you working on? And please tell me it's not another TODO app...",
+      "fit-felix": "What's up! Fit Felix here 💪 Ready to crush some goals? Whether you want to lose weight, build muscle, or just feel better - I've got you covered.",
+      "chef-carlos": "Hola! Chef Carlos here 👨‍🍳 Let's cook something amazing today. What are you craving? Or are you looking to level up your kitchen skills?",
+      "lingua-lisa": "Bonjour! Ciao! Hola! 🗣️ I'm Lingua Lisa. Ready to learn a new language? Tell me which one and your current level - we'll get you fluent!",
+      "money-mike": "Yo! Money Mike here 💰 Let's talk about building wealth. Are you trying to get out of debt, start investing, or just optimize your finances?",
+      "travel-tara": "Hey wanderer! ✈️ Travel Tara here. Dreaming of your next adventure? Tell me about your ideal trip and I'll help you make it happen!",
+      "style-sam": "Hello! Style Sam here 👔 Ready to elevate your wardrobe? Whether you need a complete overhaul or just some fresh ideas - let's find your style!",
       default: `Hi! I'm ${persona.name}. ${persona.description}. How can I help you today?`,
     };
     return welcomeMessages[personaId] || welcomeMessages.default;
