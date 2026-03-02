@@ -34,14 +34,24 @@ function LoginForm() {
         redirect: false,
       });
 
+      console.log("SignIn result:", result);
+
       if (result?.error) {
+        if (result.error === "CredentialsSignin") {
+          throw new Error("Invalid email or password. Please try again.");
+        }
         throw new Error(result.error);
+      }
+
+      if (!result?.ok) {
+        throw new Error("Login failed. Please try again.");
       }
 
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid email or password");
+      console.error("Login error:", err);
+      setError(err instanceof Error ? err.message : "An error occurred during login");
     } finally {
       setIsLoading(false);
     }
