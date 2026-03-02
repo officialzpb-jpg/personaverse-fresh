@@ -33,8 +33,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
+    // Hash password with explicit salt rounds
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    console.log("Signup - Password hashed successfully");
+    console.log("Signup - Hash preview:", hashedPassword.substring(0, 30) + "...");
 
     // Create user
     const user = await prisma.user.create({

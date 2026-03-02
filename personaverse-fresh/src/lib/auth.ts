@@ -57,10 +57,15 @@ export const authOptions: NextAuthOptions = {
           }
 
           console.log("Comparing passwords for user:", user.email);
+          console.log("Input password length:", credentials.password.length);
+          console.log("Stored hash preview:", user.password?.substring(0, 30) + "...");
+          
           const isPasswordValid = await bcrypt.compare(
             credentials.password,
-            user.password
+            user.password || ""
           );
+          
+          console.log("bcrypt.compare result:", isPasswordValid);
 
           if (!isPasswordValid) {
             console.log("Invalid password for user:", user.email);
