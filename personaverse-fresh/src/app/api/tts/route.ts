@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const voiceId = ELEVENLABS_VOICES[voice] || ELEVENLABS_VOICES.alloy;
     const audioBuffer = await generateSpeech(text, voiceId);
 
-    return new Response(audioBuffer, {
+    return new Response(audioBuffer as any, {
       headers: {
         "Content-Type": "audio/mpeg",
         "Content-Length": audioBuffer.length.toString(),
