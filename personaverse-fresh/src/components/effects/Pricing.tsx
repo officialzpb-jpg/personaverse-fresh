@@ -177,14 +177,14 @@ export function Pricing() {
               className="relative"
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-sm font-medium text-white whitespace-nowrap z-10">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-sm font-medium text-white whitespace-nowrap z-10 pointer-events-none">
                   Most Popular
                 </div>
               )}
               
               <div
                 className={cn(
-                  "h-full rounded-2xl p-8",
+                  "relative h-full rounded-2xl p-8 z-0",
                   plan.popular
                     ? "glass-card gradient-border glow-purple"
                     : "glass"
