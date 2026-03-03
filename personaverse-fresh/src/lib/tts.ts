@@ -1,50 +1,42 @@
-import { ElevenLabsClient } from "elevenlabs";
+// OpenAI TTS Service
+// Much cheaper than ElevenLabs: $0.015 per 1,000 characters
 
-const client = new ElevenLabsClient({
-  apiKey: process.env.ELEVENLABS_API_KEY,
-});
+export const OPENAI_VOICES = {
+  alloy: "alloy",
+  echo: "echo", 
+  fable: "fable",
+  onyx: "onyx",
+  nova: "nova",
+  shimmer: "shimmer",
+} as const;
 
-// Default voices mapping
-export const ELEVENLABS_VOICES: Record<string, string> = {
-  alloy: "21m00Tcm4TlvDq8ikWAM",    // Rachel
-  echo: "EXAVITQu4vr4xnSDxMaL",     // Josh
-  fable: "XB0fDUnXU5powFXDhCwa",    // Adam
-  onyx: "AZnzlk1XvdvUeBnXmlld",     // Sam
-  nova: "TX3AE5NoiNoCH9MekJET",     // Bella
-  shimmer: "yoZ06aMxZJJ28mfd3POQ",  // Antoni
-};
-
-export async function generateSpeech(text: string, voiceId: string): Promise<Buffer> {
+export async function generateSpeech(text: string, voice: string): Promise<Buffer> {
   try {
-    const audio = await client.generate({
-      voice: voiceId,
-      text,
-      model_id: "eleven_monolingual_v1",
+    const voiceId = OPENAI_VOICES[voice as keyof typeof OPENAI_VOICES] || "alloy";
+    
+    const response = await fetch("https://api.openai.com/v1/audio/speech", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "tts-1",
+        voice: voiceId,
+        input: text,
+      }),
     });
 
-    // Convert stream to buffer
-    const chunks: Buffer[] = [];
-    for await (const chunk of audio) {
-      chunks.push(Buffer.from(chunk));
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      console.error("OpenAI TTS error:", error);
+      throw new Error(error.error?.message || "Failed to generate speech");
     }
 
-    return Buffer.concat(chunks);
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
   } catch (error) {
     console.error("TTS generation error:", error);
-    throw new Error("Failed to generate speech");
-  }
-}
-
-export async function getVoices() {
-  try {
-    const voices = await client.voices.getAll();
-    return voices.voices.map((voice) => ({
-      id: voice.voice_id,
-      name: voice.name,
-      preview: voice.preview_url,
-    }));
-  } catch (error) {
-    console.error("Get voices error:", error);
-    return [];
+    throw error;
   }
 }

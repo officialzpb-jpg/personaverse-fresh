@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateSpeech, ELEVENLABS_VOICES } from "@/lib/tts";
+import { generateSpeech, OPENAI_VOICES } from "@/lib/tts";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const voiceId = ELEVENLABS_VOICES[voice] || ELEVENLABS_VOICES.alloy;
+    const voiceId = OPENAI_VOICES[voice as keyof typeof OPENAI_VOICES] || OPENAI_VOICES.alloy;
     console.log("Using voice ID:", voiceId);
-    console.log("ElevenLabs API Key exists:", !!process.env.ELEVENLABS_API_KEY);
+    console.log("OpenAI API Key exists:", !!process.env.OPENAI_API_KEY);
 
     const audioBuffer = await generateSpeech(text, voiceId);
     console.log("Audio generated, size:", audioBuffer.length);
