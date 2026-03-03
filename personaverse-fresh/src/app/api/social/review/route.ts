@@ -70,11 +70,6 @@ export async function GET(req: NextRequest) {
 
     const reviews = await prisma.review.findMany({
       where: { personaId },
-      include: {
-        user: {
-          select: { name: true, image: true },
-        },
-      },
       orderBy: { createdAt: "desc" },
     });
 
