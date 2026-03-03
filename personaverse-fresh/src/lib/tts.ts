@@ -2,13 +2,44 @@
 // Much cheaper than ElevenLabs: $0.015 per 1,000 characters
 
 export const OPENAI_VOICES = {
-  alloy: "alloy",
-  echo: "echo", 
-  fable: "fable",
-  onyx: "onyx",
-  nova: "nova",
-  shimmer: "shimmer",
+  alloy: "alloy",      // Neutral, balanced
+  echo: "echo",        // Warm, approachable
+  fable: "fable",      // British accent, refined
+  onyx: "onyx",        // Deep, authoritative
+  nova: "nova",        // Energetic, friendly
+  shimmer: "shimmer",  // Clear, optimistic
 } as const;
+
+// Map personas to voices that fit their personality
+export const PERSONA_VOICES: Record<string, string> = {
+  // Energetic/Casual personas
+  "viral-vince": "nova",
+  "game-guru": "echo",
+  "fit-felix": "nova",
+  "travel-tara": "nova",
+  "dating-doctor": "nova",
+  
+  // Professional/Authoritative personas
+  "tech-titan": "onyx",
+  "code-wizard": "onyx",
+  "money-mike": "onyx",
+  
+  // Calm/Nurturing personas
+  "mindful-maya": "alloy",
+  "chef-carlos": "echo",
+  
+  // Refined/Educated personas
+  "lingua-lisa": "shimmer",
+  "style-sam": "fable",
+  
+  // Default
+  "default": "alloy",
+  "site-assistant": "alloy",
+};
+
+export function getVoiceForPersona(personaId: string): string {
+  return PERSONA_VOICES[personaId] || OPENAI_VOICES.alloy;
+}
 
 export async function generateSpeech(text: string, voice: string): Promise<Buffer> {
   try {

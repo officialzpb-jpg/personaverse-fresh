@@ -6,9 +6,10 @@ import { Volume2, Play, Pause, Loader2, AlertCircle } from "lucide-react";
 interface AudioPlayerProps {
   text: string;
   voice?: string;
+  personaId?: string;
 }
 
-export function AudioPlayer({ text, voice = "alloy" }: AudioPlayerProps) {
+export function AudioPlayer({ text, voice = "alloy", personaId }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export function AudioPlayer({ text, voice = "alloy" }: AudioPlayerProps) {
       const response = await fetch("/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, voice }),
+        body: JSON.stringify({ text, voice, personaId }),
       });
 
       console.log("TTS response status:", response.status);

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateSpeech, OPENAI_VOICES } from "@/lib/tts";
+import { generateSpeech, getVoiceForPersona } from "@/lib/tts";
 
 export async function POST(req: NextRequest) {
   try {
-    const { text, voice = "alloy" } = await req.json();
+    const { text, voice = "alloy", personaId } = await req.json();
 
-    console.log("TTS request received:", { textLength: text?.length, voice });
+    console.log("TTS request received:", { textLength: text?.length, voice, personaId });
 
     if (!text) {
       return NextResponse.json(
@@ -14,11 +14,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const voiceId = OPENAI_VOICES[voice as keyof typeof OPENAI_VOICES] || OPENAI_VOICES.alloy;
-    console.log("Using voice ID:", voiceId);
+    // Use persona-specific voice if personaId is provided
+    const voiceToUse = personaId ? getVoiceForPersona(personaId) : voice;
+    console.log("Using voice:", voiceToUse, "for persona:", personaId);
     console.log("OpenAI API Key exists:", !!process.env.OPENAI_API_KEY);
 
-    const audioBuffer = await generateSpeech(text, voiceId);
+    const audioBuffer = await generateSpeech(text, voiceToUse);
     console.log("Audio generated, size:", audioBuffer.length);
 
     return new Response(audioBuffer as any, {
