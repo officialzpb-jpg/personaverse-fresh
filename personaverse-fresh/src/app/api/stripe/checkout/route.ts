@@ -13,9 +13,14 @@ export async function POST(req: NextRequest) {
 
     const { planId } = await req.json();
     
-    const plan = Object.values(PLANS).find((p) => p.id === planId);
+    const plan = PLANS[planId as keyof typeof PLANS];
     
     if (!plan || plan.id === "free") {
+      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+    }
+
+    // Type guard to ensure we have a paid plan with priceId
+    if (!("priceId" in plan)) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
