@@ -232,15 +232,19 @@ export function Pricing() {
                 
                 {/* CTA */}
                 <button
-                  onClick={() => handleSubscribe(plan.planId)}
+                  onClick={() => {
+                    console.log("Button clicked!");
+                    handleSubscribe(plan.planId);
+                  }}
                   disabled={loading === plan.planId}
                   className={cn(
-                    "block w-full py-3 px-6 rounded-xl font-semibold text-center transition-all duration-200",
+                    "relative z-20 block w-full py-3 px-6 rounded-xl font-semibold text-center transition-all duration-200 cursor-pointer pointer-events-auto",
                     plan.popular
-                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 glow-purple"
+                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500"
                       : "glass text-white hover:bg-white/10",
                     loading === plan.planId && "opacity-50 cursor-not-allowed"
                   )}
+                  style={{ position: 'relative', zIndex: 20 }}
                 >
                   {loading === plan.planId ? (
                     <span className="flex items-center justify-center gap-2">
