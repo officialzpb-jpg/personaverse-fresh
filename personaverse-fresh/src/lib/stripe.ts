@@ -5,8 +5,8 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export const STRIPE_PRICE_IDS = {
-  pro: process.env.STRIPE_PRO_PRICE_ID!,
-  creator: process.env.STRIPE_CREATOR_PRICE_ID!,
+  pro: process.env.STRIPE_PRO_PRICE_ID || "",
+  creator: process.env.STRIPE_CREATOR_PRICE_ID || "",
 };
 
 export const PLANS = {

@@ -13,16 +13,27 @@ export async function POST(req: NextRequest) {
 
     const { planId } = await req.json();
     
+    console.log("Checkout request for plan:", planId);
+    console.log("Available plans:", Object.keys(PLANS));
+    
     const plan = PLANS[planId as keyof typeof PLANS];
     
-    if (!plan || plan.id === "free") {
+    if (!plan) {
+      console.error("Plan not found:", planId);
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
-    // Type guard to ensure we have a paid plan with priceId
-    if (!("priceId" in plan)) {
-      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+    if (plan.id === "free") {
+      return NextResponse.json({ error: "Cannot subscribe to free plan" }, { status: 400 });
     }
+
+    // Type guard to ensure we have a paid plan with priceId
+    if (!("priceId" in plan) || !plan.priceId) {
+      console.error("Plan has no priceId:", plan);
+      return NextResponse.json({ error: "Plan not configured. Please contact support." }, { status: 400 });
+    }
+
+    console.log("Creating checkout with priceId:", plan.priceId);
 
     // Create Stripe checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
@@ -42,11 +53,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log("Checkout session created:", checkoutSession.id);
+
     return NextResponse.json({ url: checkoutSession.url });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Stripe checkout error:", error);
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
+      { error: "Failed to create checkout session", details: error.message },
       { status: 500 }
     );
   }
