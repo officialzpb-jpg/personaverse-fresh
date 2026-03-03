@@ -68,6 +68,8 @@ export function Pricing() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSubscribe = async (planId: string) => {
     if (!session) {
       window.location.href = "/login";
@@ -80,6 +82,7 @@ export function Pricing() {
     }
 
     setLoading(planId);
+    setError(null);
 
     try {
       const response = await fetch("/api/stripe/checkout", {
@@ -91,14 +94,18 @@ export function Pricing() {
 
       const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.error || data.details || "Failed to create checkout");
+      }
+
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Failed to create checkout session");
+        throw new Error("No checkout URL received");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Checkout error:", error);
-      alert("Something went wrong");
+      setError(error.message || "Something went wrong");
     } finally {
       setLoading(null);
     }
@@ -147,6 +154,17 @@ export function Pricing() {
           </motion.p>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-md mx-auto mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-center"
+          >
+            {error}
+          </motion.div>
+        )}
+
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
@@ -159,7 +177,7 @@ export function Pricing() {
               className="relative"
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-sm font-medium text-white">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-sm font-medium text-white whitespace-nowrap z-10">
                   Most Popular
                 </div>
               )}
