@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, X, Sparkles, Zap, User, Settings, LogOut, LayoutDashboard, Bot } from "lucide-react";
+import { Menu, X, Sparkles, Zap, User, Settings, LogOut, LayoutDashboard, Bot, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -96,6 +96,14 @@ export function Navbar() {
                       >
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
+                      </Link>
+                      <Link
+                        href="/analytics"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                      >
+                        <BarChart3 className="w-4 h-4" />
+                        Analytics
                       </Link>
                       <Link
                         href="/chats"
