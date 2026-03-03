@@ -71,12 +71,16 @@ export function Pricing() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSubscribe = async (planId: string) => {
+    console.log("Subscribe clicked for plan:", planId);
+    
     if (!session) {
+      console.log("No session, redirecting to login");
       window.location.href = "/login";
       return;
     }
 
     if (planId === "free") {
+      console.log("Free plan, redirecting to signup");
       window.location.href = "/signup";
       return;
     }
@@ -85,6 +89,7 @@ export function Pricing() {
     setError(null);
 
     try {
+      console.log("Calling checkout API for plan:", planId);
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,6 +98,7 @@ export function Pricing() {
       });
 
       const data = await response.json();
+      console.log("Checkout response:", data);
 
       if (!response.ok) {
         throw new Error(data.error || data.details || "Failed to create checkout");
@@ -184,7 +190,7 @@ export function Pricing() {
               
               <div
                 className={cn(
-                  "relative h-full rounded-2xl p-8 z-0",
+                  "relative h-full rounded-2xl p-8 pt-10",
                   plan.popular
                     ? "glass-card gradient-border glow-purple"
                     : "glass"
