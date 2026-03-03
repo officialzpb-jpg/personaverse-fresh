@@ -19,6 +19,8 @@ import {
   AlertCircle
 } from "lucide-react";
 
+import { AudioPlayer } from "./AudioPlayer";
+
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -509,6 +511,7 @@ export function ChatInterface({ persona = DEFAULT_PERSONA, embedded = false, onC
               {/* Message Actions */}
               {message.role === "assistant" && message.content && (
                 <div className="flex items-center gap-1 mt-1 opacity-0 hover:opacity-100 transition-opacity">
+                  <AudioPlayer text={message.content} voice={persona.id} />
                   <button
                     onClick={() => copyMessage(message.content)}
                     className="p-1 hover:bg-white/10 rounded transition-colors"
