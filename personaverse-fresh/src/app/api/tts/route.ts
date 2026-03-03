@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     // Use persona-specific voice if personaId is provided
     const voiceToUse = personaId ? getVoiceForPersona(personaId) : voice;
     console.log("Using voice:", voiceToUse, "for persona:", personaId);
-    console.log("OpenAI API Key exists:", !!process.env.OPENAI_API_KEY);
+    console.log("ElevenLabs API Key exists:", !!process.env.ELEVENLABS_API_KEY);
 
     const audioBuffer = await generateSpeech(text, voiceToUse);
     console.log("Audio generated, size:", audioBuffer.length);

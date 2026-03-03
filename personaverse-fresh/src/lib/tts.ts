@@ -1,36 +1,40 @@
-// OpenAI TTS Service
-// Much cheaper than ElevenLabs: $0.015 per 1,000 characters
+// ElevenLabs TTS Service
+// Free tier: 10,000 characters/month, 3 custom voices
 
-export const OPENAI_VOICES = {
-  alloy: "alloy",      // Neutral, balanced
-  echo: "echo",        // Warm, approachable
-  fable: "fable",      // British accent, refined
-  onyx: "onyx",        // Deep, authoritative
-  nova: "nova",        // Energetic, friendly
-  shimmer: "shimmer",  // Clear, optimistic
-} as const;
+// Voice mapping for personas - using ElevenLabs voice IDs
+export const ELEVENLABS_VOICES: Record<string, string> = {
+  // Gender-specific voices for better matching
+  
+  // Female voices
+  "nova": "XB0fDUnXU5powFXDhCwa",      // Bella - warm, friendly
+  "shimmer": "Xb7hH8MSUJpSbSDYk0k2",   // Antoni - bright, optimistic
+  
+  // Male voices  
+  "echo": "AZnzlk1XvdvUeBnXmlld",      // Adam - calm, professional
+  "fable": "CYw3kZ02Hs0563khs1Fj",     // Josh - British, refined
+  "onyx": "D38z5RcWu1voky8WS1ja",      // Sam - deep, authoritative
+  
+  // Neutral
+  "alloy": "21m00Tcm4TlvDq8ikWAM",     // Rachel - neutral, clear
+};
 
-// Map personas to voices that fit their personality
+// Map personas to voices that match their personality AND gender
 export const PERSONA_VOICES: Record<string, string> = {
-  // Energetic/Casual personas
-  "viral-vince": "nova",
-  "game-guru": "echo",
-  "fit-felix": "nova",
-  "travel-tara": "nova",
-  "dating-doctor": "nova",
+  // Male personas - deep/authoritative voices
+  "tech-titan": "onyx",        // Deep, authoritative
+  "code-wizard": "onyx",       // Deep, authoritative
+  "money-mike": "onyx",        // Deep, authoritative
+  "game-guru": "echo",         // Warm, approachable
+  "chef-carlos": "echo",       // Warm, approachable
+  "dating-doctor": "fable",    // British, refined
   
-  // Professional/Authoritative personas
-  "tech-titan": "onyx",
-  "code-wizard": "onyx",
-  "money-mike": "onyx",
-  
-  // Calm/Nurturing personas
-  "mindful-maya": "alloy",
-  "chef-carlos": "echo",
-  
-  // Refined/Educated personas
-  "lingua-lisa": "shimmer",
-  "style-sam": "fable",
+  // Female personas - warm/friendly voices
+  "viral-vince": "nova",       // Energetic, friendly (using female voice for variety)
+  "mindful-maya": "shimmer",   // Bright, optimistic
+  "lingua-lisa": "shimmer",    // Bright, optimistic
+  "travel-tara": "nova",       // Warm, friendly
+  "style-sam": "shimmer",      // Bright, optimistic
+  "fit-felix": "nova",         // Energetic, friendly
   
   // Default
   "default": "alloy",
@@ -38,30 +42,34 @@ export const PERSONA_VOICES: Record<string, string> = {
 };
 
 export function getVoiceForPersona(personaId: string): string {
-  return PERSONA_VOICES[personaId] || OPENAI_VOICES.alloy;
+  return PERSONA_VOICES[personaId] || ELEVENLABS_VOICES.alloy;
 }
 
 export async function generateSpeech(text: string, voice: string): Promise<Buffer> {
   try {
-    const voiceId = OPENAI_VOICES[voice as keyof typeof OPENAI_VOICES] || "alloy";
+    const voiceId = ELEVENLABS_VOICES[voice] || ELEVENLABS_VOICES.alloy;
     
-    const response = await fetch("https://api.openai.com/v1/audio/speech", {
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Accept": "audio/mpeg",
         "Content-Type": "application/json",
+        "xi-api-key": process.env.ELEVENLABS_API_KEY || "",
       },
       body: JSON.stringify({
-        model: "tts-1",
-        voice: voiceId,
-        input: text,
+        text,
+        model_id: "eleven_monolingual_v1",
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75,
+        },
       }),
     });
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      console.error("OpenAI TTS error:", error);
-      throw new Error(error.error?.message || "Failed to generate speech");
+      console.error("ElevenLabs TTS error:", error);
+      throw new Error(error.detail?.message || "Failed to generate speech");
     }
 
     const arrayBuffer = await response.arrayBuffer();
