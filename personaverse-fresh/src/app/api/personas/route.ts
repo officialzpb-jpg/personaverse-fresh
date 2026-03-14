@@ -43,23 +43,18 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    // Return all public personas (no auth required for viewing)
     const personas = await prisma.persona.findMany({
-      where: { userId: session.user.id },
+      where: { isPublic: true },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
-    return NextResponse.json({ personas });
+    // Return array directly, not wrapped in object
+    return NextResponse.json(personas);
   } catch (error) {
     console.error("Get personas error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch personas" },
-      { status: 500 }
-    );
+    // Return empty array on error to prevent UI crash
+    return NextResponse.json([]);
   }
 }

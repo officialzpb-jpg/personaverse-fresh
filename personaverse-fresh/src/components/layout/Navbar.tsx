@@ -9,12 +9,14 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/personas", label: "Personas" },
+  { href: "/avatar-hub", label: "Avatar Hub", highlight: true },
+  { href: "/avatars", label: "Avatars" },
   { href: "/marketplace", label: "Marketplace" },
   { href: "/create", label: "Create" },
   { href: "/pricing", label: "Pricing" },
   { href: "/creators", label: "For Creators" },
   { href: "/developers", label: "API" },
-  { href: "/battle-arena", label: "Battle Arena", highlight: true },
+  { href: "/battle-arena", label: "Battle Arena" },
 ];
 
 export function Navbar() {
@@ -28,16 +30,19 @@ export function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-dark border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-14 h-14 rounded-full overflow-hidden">
+              <img 
+                src="/logo.jpg" 
+                alt="PersonaVerse" 
+                className="w-full h-full object-cover"
+              />
             </div>
-            <span className="text-xl font-bold gradient-text">PersonaVerse</span>
+            <span className="text-2xl font-bold gradient-text">PersonaVerse</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -87,7 +92,7 @@ export function Navbar() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 top-full mt-2 w-48 glass-card rounded-xl overflow-hidden z-50"
+                      className="absolute right-0 top-full mt-2 w-48 glass-dark rounded-xl overflow-hidden z-50"
                     >
                       <Link
                         href="/dashboard"
@@ -178,7 +183,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden glass border-t border-white/5"
+            className="lg:hidden glass-dark border-t border-white/5"
           >
             <div className="px-4 py-4 space-y-2">
               {isLoggedIn && (

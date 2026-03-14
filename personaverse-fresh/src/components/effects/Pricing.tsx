@@ -118,12 +118,7 @@ export function Pricing() {
   };
 
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[150px]" />
-        <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[150px]" />
-      </div>
-      
+    <section className="py-24 relative overflow-hidden bg-transparent">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -132,7 +127,7 @@ export function Pricing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-dark mb-6"
           >
             <Crown className="w-4 h-4 text-amber-400" />
             <span className="text-sm font-medium text-gray-300">Simple Pricing</span>
@@ -190,10 +185,8 @@ export function Pricing() {
               
               <div
                 className={cn(
-                  "relative h-full rounded-2xl p-8 pt-10",
-                  plan.popular
-                    ? "glass-card gradient-border glow-purple"
-                    : "glass"
+                  "relative h-full rounded-2xl p-8 pt-10 glass-dark",
+                  plan.popular && "gradient-border glow-purple"
                 )}
               >
                 {/* Plan Header */}
@@ -241,7 +234,7 @@ export function Pricing() {
                     "relative z-20 block w-full py-3 px-6 rounded-xl font-semibold text-center transition-all duration-200 cursor-pointer pointer-events-auto",
                     plan.popular
                       ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500"
-                      : "glass text-white hover:bg-white/10",
+                      : "glass-dark text-white hover:bg-white/10",
                     loading === plan.planId && "opacity-50 cursor-not-allowed"
                   )}
                   style={{ position: 'relative', zIndex: 20 }}

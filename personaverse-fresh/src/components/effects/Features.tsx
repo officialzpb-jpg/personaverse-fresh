@@ -66,9 +66,7 @@ const features = [
 
 export function Features() {
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 grid-bg opacity-50" />
-      
+    <section className="py-24 relative overflow-hidden bg-transparent">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -77,7 +75,7 @@ export function Features() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-dark mb-6"
           >
             <Sparkles className="w-4 h-4 text-purple-400" />
             <span className="text-sm font-medium text-gray-300">Powerful Features</span>

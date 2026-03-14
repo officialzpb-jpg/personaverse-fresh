@@ -62,9 +62,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 grid-bg opacity-30" />
-      
+    <section className="py-24 relative overflow-hidden bg-transparent">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -73,7 +71,7 @@ export function Testimonials() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-dark mb-6"
           >
             <Star className="w-4 h-4 text-yellow-400" />
             <span className="text-sm font-medium text-gray-300">Loved by Users</span>
@@ -113,7 +111,7 @@ export function Testimonials() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
-              <div className="h-full glass-card rounded-2xl p-6 card-lift relative overflow-hidden">
+              <div className="h-full glass-dark rounded-2xl p-6 card-lift relative overflow-hidden">
                 {/* Quote Icon */}
                 <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
                   <Quote className="w-5 h-5 text-purple-400" />

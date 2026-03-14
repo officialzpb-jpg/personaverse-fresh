@@ -46,17 +46,21 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/5 bg-[#050505]">
+    <footer className="border-t border-white/5 glass-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer */}
         <div className="py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+            <Link href="/" className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full overflow-hidden">
+                <img 
+                  src="/logo.jpg" 
+                  alt="PersonaVerse" 
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <span className="text-xl font-bold gradient-text">PersonaVerse</span>
+              <span className="text-2xl font-bold gradient-text">PersonaVerse</span>
             </Link>
             <p className="text-sm text-gray-400 mb-4">
               The AI Personality & Multi-Model Chat Platform. Chat, create, and monetize AI personas.

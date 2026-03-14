@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      width: 300px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .header {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+    
+    .header p {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    .toggle-section {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .toggle-btn {
+      background: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #667eea;
+    }
+    
+    .toggle-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .toggle-btn.disabled {
+      background: rgba(255,255,255,0.3);
+      color: white;
+    }
+    
+    .settings-section {
+      padding: 0 20px 20px;
+    }
+    
+    .setting-item {
+      margin-bottom: 15px;
+    }
+    
+    .setting-item label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 5px;
+      opacity: 0.9;
+    }
+    
+    .setting-item select,
+    .setting-item input[type="range"] {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    
+    .setting-item input[type="range"] {
+      padding: 0;
+    }
+    
+    .range-value {
+      text-align: right;
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    
+    .actions {
+      padding: 0 20px 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .action-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    .footer {
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 11px;
+      opacity: 0.6;
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎭 Personaverse</h1>
+    <p>Your AI Avatar Companion</p>
+  </div>
+  
+  <div class="toggle-section">
+    <button id="toggleBtn" class="toggle-btn">Hide Avatar</button>
+  </div>
+  
+  <div class="settings-section">
+    <div class="setting-item">
+      <label>Personality</label>
+      <select id="personality">
+        <option value="wacky">Wacky 🤪</option>
+        <option value="chill">Chill 😌</option>
+        <option value="smart">Smart 🤓</option>
+        <option value="sassy">Sassy 💅</option>
+      </select>
+    </div>
+    
+    <div class="setting-item">
+      <label>Size</label>
+      <input type="range" id="size" min="80" max="200" value="120">
+      <div class="range-value"><span id="sizeValue">120</span>px</div>
+    </div>
+    
+    <div class="setting-item">
+      <label>Opacity</label>
+      <input type="range" id="opacity" min="50" max="100" value="90">
+      <div class="range-value"><span id="opacityValue">90</span>%</div>
+    </div>
+  </div>
+  
+  <div class="actions">
+    <button class="action-btn" id="chatBtn">💬 Quick Chat</button>
+    <button class="action-btn" id="danceBtn">💃 Dance</button>
+  </div>
+  
+  <div class="footer">
+    <a href="https://www.personaverse.space" target="_blank" style="color: white;">Visit Personaverse →</a>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

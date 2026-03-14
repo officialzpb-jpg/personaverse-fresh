@@ -38,3 +38,30 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.
+
+---
+
+## Zay's OpenClaw Setup
+
+### Enabled Skills
+- **weather** - Get weather forecasts (no API key needed)
+- **github** - GitHub CLI operations (requires `gh` CLI)
+- **healthcheck** - System security checks
+- **summarize** - Text summarization
+
+### Tools Configuration
+- **Web Search**: Enabled
+- **Web Fetch**: Enabled
+- **Browser**: Enabled (attach-only mode)
+- **Canvas**: Enabled
+
+### Channels
+- **Telegram**: Enabled (bot token configured)
+- **DM Policy**: Pairing required
+
+### Models
+- **Primary**: kimi-coding/k2p5
+- **Provider**: Kimi (Anthropic-compatible API)
+
+### Workspace Skills Location
+`./skills/` (relative to workspace root)

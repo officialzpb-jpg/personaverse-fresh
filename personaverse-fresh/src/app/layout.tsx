@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ChatWidget } from "@/components/chat/ChatInterface";
 import AuthProvider from "@/components/providers/AuthProvider";
+import { BackgroundWrapper } from "@/components/effects/BackgroundWrapper";
+import { StartupWrapper } from "@/components/effects/StartupWrapper";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -97,9 +99,14 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-[#0a0a0a] text-white`}>
+        <BackgroundWrapper />
         <AuthProvider>
-          {children}
-          <ChatWidget />
+          <StartupWrapper>
+            <div className="relative z-10">
+              {children}
+              <ChatWidget />
+            </div>
+          </StartupWrapper>
         </AuthProvider>
       </body>
     </html>

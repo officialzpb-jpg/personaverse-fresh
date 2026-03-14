@@ -1,0 +1,45 @@
+{
+  "name": "67-tycoon",
+  "tree": {
+    "$className": "DataModel",
+    
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Events": {
+        "$className": "Folder",
+        "$path": "src/ReplicatedStorage/Events"
+      },
+      "Config": {
+        "$path": "src/ReplicatedStorage/Config.lua"
+      },
+      "MonetizationConfig": {
+        "$path": "src/ReplicatedStorage/MonetizationConfig.lua"
+      }
+    },
+    
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "$path": "src/ServerScriptService"
+    },
+    
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "$path": "src/StarterPlayerScripts"
+      }
+    },
+    
+    "StarterGui": {
+      "$className": "StarterGui",
+      "$path": "src/StarterGui"
+    },
+    
+    "Workspace": {
+      "$className": "Workspace",
+      "$properties": {
+        "Gravity": 196.2
+      }
+    }
+  }
+}

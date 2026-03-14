@@ -1,6 +1,23 @@
 import Stripe from "stripe";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+// Lazy initialization of Stripe client to handle missing env vars during build
+let stripeClient: Stripe | null = null;
+
+export function getStripe(): Stripe {
+  if (!stripeClient) {
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) {
+      throw new Error("STRIPE_SECRET_KEY is not set");
+    }
+    stripeClient = new Stripe(secretKey, {
+      apiVersion: "2026-02-25.clover",
+    });
+  }
+  return stripeClient;
+}
+
+// For backwards compatibility
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
   apiVersion: "2026-02-25.clover",
 });
 

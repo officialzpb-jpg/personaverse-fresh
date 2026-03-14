@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
       data: {
         userId: user.id,
         endpoint: "/v1/chat",
-        timestamp: new Date(),
       },
     });
 

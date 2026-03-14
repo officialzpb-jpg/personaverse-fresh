@@ -75,11 +75,7 @@ const personas = [
 
 export function PersonaShowcase() {
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-purple-600/10 rounded-full blur-[150px]" />
-      </div>
-      
+    <section className="py-24 relative overflow-hidden bg-transparent">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
@@ -89,7 +85,7 @@ export function PersonaShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-4"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-dark mb-4"
             >
               <TrendingUp className="w-4 h-4 text-cyan-400" />
               <span className="text-sm font-medium text-gray-300">Trending Now</span>
@@ -126,7 +122,7 @@ export function PersonaShowcase() {
           >
             <Link
               href="/personas"
-              className="group inline-flex items-center gap-2 px-6 py-3 glass rounded-xl font-medium text-white hover:bg-white/10 transition-all"
+              className="group inline-flex items-center gap-2 px-6 py-3 glass-dark rounded-xl font-medium text-white hover:bg-white/10 transition-all"
             >
               View All Personas
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -145,7 +141,7 @@ export function PersonaShowcase() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Link href={`/personas/${persona.id}`}>
-                <div className="group glass-card rounded-2xl p-6 card-lift relative overflow-hidden">
+                <div className="group glass-dark rounded-2xl p-6 card-lift relative overflow-hidden">
                   {/* Trending Badge */}
                   {persona.trending && (
                     <div className="absolute top-4 right-4 px-2 py-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-full text-xs font-medium text-white flex items-center gap-1">

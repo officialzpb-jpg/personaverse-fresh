@@ -9,13 +9,21 @@ import { ChatWidget } from "@/components/chat/ChatInterface";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a]">
+    <main className="min-h-screen bg-transparent">
       <Navbar />
       <Hero />
-      <Features />
-      <PersonaShowcase />
-      <Pricing />
-      <Testimonials />
+      <section className="glass-section">
+        <Features />
+      </section>
+      <section className="glass-section">
+        <PersonaShowcase />
+      </section>
+      <section className="glass-section">
+        <Pricing />
+      </section>
+      <section className="glass-section">
+        <Testimonials />
+      </section>
       <Footer />
       <ChatWidget />
     </main>
